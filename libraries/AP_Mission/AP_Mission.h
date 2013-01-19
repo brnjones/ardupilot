@@ -58,9 +58,9 @@ public:
     bool        increment_waypoint_index();
 
     /* Forces a reset of the command queue to a specified waypoint.
-     *  If home is commanded, nav_waypoints[0] is set to last waypoint in mission,
-     *  otherwise nav_waypoints[0] is not changed.
-     *  Returns false if a non_nav command is requested or error. */
+    *  If home is commanded, nav_waypoints[0] is set to last waypoint in mission,
+    *  otherwise nav_waypoints[0] is not changed.
+    *  Returns false if a non_nav command is requested or error. */
     bool        change_waypoint_index(const uint8_t &new_index);
 
     /*Gets a new command associated with current leg of the mission.
@@ -76,6 +76,11 @@ public:
      *  those in nav_waypoints.  */
     uint8_t *      waypoint_index()           {
         return _index;
+    };
+
+    /*returns just the current index.  */
+    uint8_t        command_index()    {
+        return _index[1];
     };
 
     //gets the total number of commands in the mission.

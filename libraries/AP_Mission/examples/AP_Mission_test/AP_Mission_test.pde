@@ -38,12 +38,13 @@ void setup(void)
 
     hal.console->printf("WP_SIZE=%u, WP_START_BYTE=%x\n",WP_SIZE, WP_START_BYTE);
 
+    mission.init_commands();
     //Hack because parameters from APM are not loaded
     uint8_t missionsize=14;
     mission.set_command_total(missionsize);
-
+    mission.change_waypoint_index(1);
+    
     show_mission(missionsize);
-    mission.change_waypoint_index(2);
     sequence_through_mission(missionsize);
     mission.change_waypoint_index(12);
     sequence_through_mission(missionsize);
@@ -87,7 +88,7 @@ void print_location(Location wp){
 
 void print_index()
 {
-    hal.console->printf("inx[0]=%u  inx[1]=%u   inx[2]=%u\n",*(index),*(index+1),*(index+2));
+    hal.console->printf("Current=%i, Queue: inx[0]=%u  inx[1]=%u   inx[2]=%u\n",mission.command_index(),*(index),*(index+1),*(index+2));
 }
 
 void loop(void){
