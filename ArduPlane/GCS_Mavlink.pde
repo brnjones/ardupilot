@@ -1201,7 +1201,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             break;
 
         // send waypoint
-        tell_command = get_cmd_with_index_raw(packet.seq);
+        tell_command = mission.get_cmd_with_index_raw(packet.seq);
 
         // set frame of waypoint
         uint8_t frame;
@@ -1374,7 +1374,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         if (mavlink_check_target(packet.target_system, packet.target_component)) break;
 
         // clear all commands
-        g.command_total.set_and_save(0);
+        mission.set_command_total(0);
 
         // note that we don't send multiple acks, as otherwise a
         // GCS that is doing a clear followed by a set may see
@@ -1408,7 +1408,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         if (packet.count > MAX_WAYPOINTS) {
             packet.count = MAX_WAYPOINTS;
         }
-        g.command_total.set_and_save(packet.count - 1);
+        mission.set_command_total(packet.count - 1);
 
         waypoint_timelast_receive = millis();
         waypoint_timelast_request = 0;
@@ -1625,7 +1625,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
                 goto mission_failed;
             }
 
-            set_cmd_with_index(tell_command, packet.seq);
+            mission.set_cmd_with_index(tell_command, packet.seq);
 
             // update waypoint receiving state machine
             waypoint_timelast_receive = millis();

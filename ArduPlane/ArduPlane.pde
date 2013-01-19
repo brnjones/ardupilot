@@ -49,6 +49,7 @@
 #include <GCS_MAVLink.h>    // MAVLink GCS definitions
 #include <AP_Mount.h>           // Camera/Antenna mount
 #include <AP_Declination.h> // ArduPilot Mega Declination Helper Library
+#include <AP_Mission.h>     // ArduPilot Mega Mission Handling Library
 #include <DataFlash.h>
 #include <SITL.h>
 
@@ -655,6 +656,9 @@ AP_Mount camera_mount2(&current_loc, g_gps, &ahrs, 1);
 
 // setup the var_info table
 AP_Param param_loader(var_info, WP_START_BYTE);
+
+// Create Mission
+AP_Mission mission;
 
 void setup() {
     // this needs to be the first call, as it fills memory with

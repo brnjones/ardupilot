@@ -301,7 +301,7 @@ static void startup_ground(void)
     // initialize commands
     // -------------------
     init_commands();
-
+    mission.init_commands();
     // Makes the servos wiggle - 3 times signals ready to fly
     // -----------------------
     demo_servos(3);

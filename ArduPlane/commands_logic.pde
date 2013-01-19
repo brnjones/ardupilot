@@ -525,7 +525,7 @@ static void do_jump()
     }
 
     struct Location temp;
-    temp = get_cmd_with_index(g.command_index);
+    temp = mission.get_cmd_with_index(g.command_index);
 
     gcs_send_text_fmt(PSTR("Jump to WP %u. Jumps left: %d"),
                       (unsigned)next_nonnav_command.p1,
@@ -533,7 +533,7 @@ static void do_jump()
     if (next_nonnav_command.lat > 0) {
         // Decrement repeat counter
         temp.lat                        = next_nonnav_command.lat - 1;                                          
-        set_cmd_with_index(temp, g.command_index);
+        mission.set_cmd_with_index(temp, g.command_index);
     }
 
     nav_command_ID          = NO_COMMAND;
@@ -546,7 +546,7 @@ static void do_jump()
     // Need to back "next_WP" up as it was set to the next waypoint following the jump
     next_WP = prev_WP;
 
-    temp = get_cmd_with_index(g.command_index);
+    temp = mission.get_cmd_with_index(g.command_index);
 
     next_nav_command = temp;
     nav_command_ID = next_nav_command.id;
