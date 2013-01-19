@@ -34,7 +34,7 @@ void change_command(uint8_t cmd_index)
 static void update_commands(void)
 {
     if(control_mode == AUTO) {
-        if(home_is_set == true && g.command_total > 1) {
+        if(home_is_set == true && mission.command_total() > 1) {
             process_next_command();
         }
     }                                                                           // Other (eg GCS_Auto) modes may be implemented here
@@ -64,14 +64,14 @@ static void process_next_command()
     // ---------------------------------
     if (nav_command_ID == NO_COMMAND) {    // no current navigation command loaded
         temp.id = MAV_CMD_NAV_LAST;
-        while(temp.id >= MAV_CMD_NAV_LAST && nav_command_index <= g.command_total) {
+        while(temp.id >= MAV_CMD_NAV_LAST && nav_command_index <= mission.command_total()) {
             nav_command_index++;
             temp = mission.get_cmd_with_index(nav_command_index);
         }
 
         gcs_send_text_fmt(PSTR("Nav command index updated to #%i"),nav_command_index);
 
-        if(nav_command_index > g.command_total) {
+        if(nav_command_index > mission.command_total()) {
             // we are out of commands!
             gcs_send_text_P(SEVERITY_LOW,PSTR("out of commands!"));
             handle_no_commands();
@@ -100,7 +100,7 @@ static void process_next_command()
     //gcs_send_text_fmt(PSTR("Nav command index #%i"),nav_command_index);
     //gcs_send_text_fmt(PSTR("Non-Nav command index #%i"),non_nav_command_index);
     //gcs_send_text_fmt(PSTR("Non-Nav command ID #%i"),non_nav_command_ID);
-    if (nav_command_index <= (int)g.command_total && non_nav_command_ID == NO_COMMAND) {
+    if (nav_command_index <= (int)mission.command_total() && non_nav_command_ID == NO_COMMAND) {
         temp = mission.get_cmd_with_index(non_nav_command_index);
         if (temp.id <= MAV_CMD_NAV_LAST) {                       
             // The next command is a nav command.  No non-nav commands to do

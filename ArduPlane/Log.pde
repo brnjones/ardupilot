@@ -342,13 +342,15 @@ static void Log_Write_Startup(uint8_t type)
     struct log_Startup pkt = {
         LOG_PACKET_HEADER_INIT(LOG_STARTUP_MSG),
         startup_type    : type,
-        command_total   : g.command_total
+        command_total   : mission.command_total()
     };
     DataFlash.WriteBlock(&pkt, sizeof(pkt));
 
-    // write all commands to the dataflash as well
-    struct Location cmd;
-    for (uint8_t i = 0; i <= mission.command_total; i++) {
+    // create a location struct to hold the temp Waypoints for printing
+    struct Location cmd = mission.get_cmd_with_index(0);
+    Log_Write_Cmd(0, &cmd);
+
+    for (int16_t i = 1; i <= mission.command_total(); i++) {
         cmd = mission.get_cmd_with_index(i);
         Log_Write_Cmd(i, &cmd);
     }

@@ -1180,7 +1180,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         mavlink_msg_mission_count_send(
             chan,msg->sysid,
             msg->compid,
-            g.command_total + 1);     // + home
+            mission.command_total() + 1);     // + home
 
         waypoint_timelast_send   = millis();
         waypoint_receiving       = false;
@@ -1414,7 +1414,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         waypoint_timelast_request = 0;
         waypoint_receiving   = true;
         waypoint_request_i   = 0;
-        waypoint_request_last= g.command_total;
+        waypoint_request_last= mission.command_total();
         break;
     }
 
@@ -1426,8 +1426,8 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         if (mavlink_check_target(packet.target_system,packet.target_component)) break;
 
         // start waypoint receiving
-        if (packet.start_index > g.command_total ||
-            packet.end_index > g.command_total ||
+        if (packet.start_index > mission.command_total() ||
+            packet.end_index > mission.command_total() ||
             packet.end_index < packet.start_index) {
             send_text_P(SEVERITY_LOW,PSTR("flight plan update rejected"));
             break;

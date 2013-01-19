@@ -519,7 +519,7 @@ static void do_jump()
         gcs_send_text_fmt(PSTR("Jumps left: 0 - skipping"));
         return;
     }
-    if (next_nonnav_command.p1 >= g.command_total) {
+    if (next_nonnav_command.p1 >= mission.command_total()) {
         gcs_send_text_fmt(PSTR("Skipping invalid jump to %i"), next_nonnav_command.p1);
         return;        
     }
