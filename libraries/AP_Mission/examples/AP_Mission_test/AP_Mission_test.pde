@@ -1,9 +1,9 @@
 /*
-	Example of AP_Mission Library.
-    This example requires a currently loaded mission in your APM.
-    
-	2013 Code by Brandon Jones. DIYDrones.com
-*/
+ *       Example of AP_Mission Library.
+ *   This example requires a currently loaded mission in your APM.
+ *
+ *       2013 Code by Brandon Jones. DIYDrones.com
+ */
 
 
 #include <AP_Mission.h>
@@ -29,16 +29,15 @@ const AP_HAL::HAL& hal = AP_HAL_BOARD_DRIVER;
 
 
 AP_Mission mission;
-struct Location  temp_read={0};
+struct Location temp_read={0};
 uint8_t *index;
 
 void setup(void)
 {
-	cliSerial = hal.uartA;
-	hal.uartA->begin(SERIAL0_BAUD, 128, 128);
-    
-    hal.console->printf("WP_SIZE=%u, WP_START_BYTE=%x\n",WP_SIZE, WP_START_BYTE); 
-    
+    hal.uartA->begin(SERIAL0_BAUD, 128, 128);
+
+    hal.console->printf("WP_SIZE=%u, WP_START_BYTE=%x\n",WP_SIZE, WP_START_BYTE);
+
     //Hack because parameters from APM are not loaded
     uint8_t missionsize=14;
     mission.set_command_total(missionsize);
@@ -52,29 +51,29 @@ void setup(void)
 
 void sequence_through_mission(int missionsize) {
     struct Location tmp_cmd;
-    
+
     hal.console->printf("------Sequence through mission--------\n");
     index=mission.waypoint_index();
-    print_index();  
-    
-    while(mission.increment_waypoint_index()){
-            index=mission.waypoint_index();
-            print_index();  
-            while(mission.get_new_cmd(tmp_cmd)){
-                hal.console->printf("cmd:"); print_location(tmp_cmd);
-                if(tmp_cmd.id == MAV_CMD_DO_JUMP){
-                    print_index();
-                }
-                
+    print_index();
+
+    while(mission.increment_waypoint_index()) {
+        index=mission.waypoint_index();
+        print_index();
+        while(mission.get_new_cmd(tmp_cmd)) {
+            hal.console->printf("cmd:"); print_location(tmp_cmd);
+            if(tmp_cmd.id == MAV_CMD_DO_JUMP) {
+                print_index();
             }
+
+        }
     }
-    print_index();  
+    print_index();
     hal.console->printf("Mission Complete\n");
 }
 
 void show_mission(int size){
     hal.console->printf("-----------Displaying Raw Mission-----------\n");
-    for(uint16_t i=0; i <size+1; i++){
+    for(uint16_t i=0; i <size+1; i++) {
         temp_read=mission.get_cmd_with_index_raw(i);
         hal.console->printf("index=%u ", i);
         print_location(temp_read);
