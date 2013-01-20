@@ -1391,7 +1391,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         if (mavlink_check_target(packet.target_system,packet.target_component)) break;
 
         // set current command
-        change_command(packet.seq);
+        change_waypoint(packet.seq);
 
         mavlink_msg_mission_current_send(chan, g.command_index);
         break;

@@ -869,9 +869,6 @@ static void medium_loop()
         if (control_mode != FLY_BY_WIRE_B)
             calc_altitude_error();
 
-        // perform next command
-        // --------------------
-        update_commands();
         break;
 
     // This case deals with sending high rate telemetry

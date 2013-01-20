@@ -379,7 +379,7 @@ static bool verify_nav_wp()
     update_crosstrack();
     if (wp_distance <= (uint32_t)max(g.waypoint_radius,0)) {
         gcs_send_text_fmt(PSTR("Reached Waypoint #%i dist %um"),
-                          (unsigned)nav_command_index,
+                          (unsigned)mission.command_index(),
                           (unsigned)get_distance(&current_loc, &next_WP));
         return true;
     }

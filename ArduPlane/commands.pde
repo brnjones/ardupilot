@@ -14,21 +14,14 @@ static void init_commands()
 
 static void update_auto()
 {
-    if (g.command_index >= mission.command_total()) {
+    if (mission.command_index() >= mission.command_total()) {
         handle_no_commands();
         if(mission.command_total() == 0) {
             next_WP.lat             = home.lat + 1000;                  // so we don't have bad calcs
             next_WP.lng             = home.lng + 1000;                  // so we don't have bad calcs
         }
     } else {
-        if(g.command_index != 0) {
-            g.command_index = nav_command_index;
-            nav_command_index--;
-        }
-        nav_command_ID  = NO_COMMAND;
-        non_nav_command_ID      = NO_COMMAND;
-        next_nav_command.id     = CMD_BLANK;
-        process_next_command();
+         process_waypoint();
     }
 }
 
