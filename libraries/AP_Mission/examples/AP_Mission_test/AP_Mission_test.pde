@@ -30,6 +30,7 @@ const AP_HAL::HAL& hal = AP_HAL_BOARD_DRIVER;
 
 AP_Mission mission;
 struct Location temp_read={0};
+struct Location temp_jump;
 uint8_t *index;
 
 void setup(void)
@@ -40,13 +41,18 @@ void setup(void)
 
     mission.init_commands();
     //Hack because parameters from APM are not loaded
-    uint8_t missionsize=14;
+    uint8_t missionsize=5;
     mission.set_command_total(missionsize);
+    temp_jump=mission.get_cmd_with_index(4);
+    temp_jump.lat=4;
+    mission.set_cmd_with_index(temp_jump,4);
+    
     mission.change_waypoint_index(1);
     
     show_mission(missionsize);
+    mission.change_waypoint_index(1);
     sequence_through_mission(missionsize);
-    mission.change_waypoint_index(12);
+    
     sequence_through_mission(missionsize);
 }
 
@@ -63,7 +69,7 @@ void sequence_through_mission(int missionsize) {
         while(mission.get_new_cmd(tmp_cmd)) {
             hal.console->printf("cmd:"); print_location(tmp_cmd);
             if(tmp_cmd.id == MAV_CMD_DO_JUMP) {
-                print_index();
+           //     print_index();
             }
 
         }

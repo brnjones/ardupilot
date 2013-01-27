@@ -64,13 +64,20 @@ bool AP_Mission::get_new_cmd(struct Location &new_CMD)
         return false;                       //no more commands for this leg
     } else {
 
+        
         //This is required when there is a conditional command prior to a DO_JUMP
         if(temp.id == MAV_CMD_DO_JUMP) {
-            if(change_waypoint_index(temp.p1)) {
-                temp.lat--;
-                set_cmd_with_index(temp, _cmd_index);
+            if(temp.lat > 0) {
+                if(change_waypoint_index(temp.p1)) {
+                    temp.lat--;
+                    temp.lat=constrain_int16(temp.lat, 0, 100);
+                    set_cmd_with_index(temp, _cmd_index);
+                }
+            } else {
+                return false;
             }
         }
+        
         new_CMD=temp;
         _cmd_index++;
         return true;
