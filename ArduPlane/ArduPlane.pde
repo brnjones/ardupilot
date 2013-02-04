@@ -369,8 +369,7 @@ static int32_t crosstrack_bearing_cd;
 static int32_t hold_course                   = -1;              // deg * 100 dir of plane
 
 // There may be two active commands in Auto mode.
-// This indicates the active navigation command by index number
-static uint8_t nav_command_index;
+
 // This indicates the active non-navigation command by index number
 static uint8_t non_nav_command_index;
 // This is the command type (eg navigate to waypoint) of the active navigation command

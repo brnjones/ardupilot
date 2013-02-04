@@ -302,7 +302,7 @@ static void Log_Write_Cmd(uint8_t num, struct Location *wp)
 {
     struct log_Cmd pkt = {
         LOG_PACKET_HEADER_INIT(LOG_CMD_MSG),
-        command_total       : g.command_total,
+        command_total       : mission.command_total(),
         command_number      : num,
         waypoint_id         : wp->id,
         waypoint_options    : wp->options,
