@@ -20,7 +20,10 @@ static void update_auto()
             next_WP.lng             = home.lng + 1000;                  // so we don't have bad calcs
         }
     } else {
-         process_waypoint();
+        if (mission.command_index() == 0) {
+		    mission.change_waypoint_index(1);
+        }
+		process_waypoint();
     }
 }
 
