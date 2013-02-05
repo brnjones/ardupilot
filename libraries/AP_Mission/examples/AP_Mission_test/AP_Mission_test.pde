@@ -41,11 +41,15 @@ void setup(void)
 
     mission.init_commands();
     //Hack because parameters from APM are not loaded
-    uint8_t missionsize=5;
+    uint8_t missionsize=7;
     mission.set_command_total(missionsize);
     temp_jump=mission.get_cmd_with_index(4);
-    temp_jump.lat=4;
+    temp_jump.lat=10;
     mission.set_cmd_with_index(temp_jump,4);
+    
+    temp_jump=mission.get_cmd_with_index(7);
+    temp_jump.lat=10;
+    mission.set_cmd_with_index(temp_jump,7);
     
     mission.change_waypoint_index(1);
     
