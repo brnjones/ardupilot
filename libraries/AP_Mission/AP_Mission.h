@@ -32,6 +32,8 @@
 // Command/Waypoint/Location Options Bitmask
 //--------------------
 #define MASK_OPTIONS_RELATIVE_ALT    (1<<0)        // 1 = Relative altitude
+#define MASK_OPTIONS_LOITER_DIRECTION   (1<<2)     // 0 = CW
+                                                   // 1 = CCW
 
 /// @class    AP_Mission
 /// @brief    Object managing one Mission
