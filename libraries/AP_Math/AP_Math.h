@@ -98,6 +98,13 @@ float sq(float v);
 float pythagorous2(float a, float b);
 float pythagorous3(float a, float b, float c);
 
+
+bool generate_WP_flyby(const float radius, const struct Location &wpA, const struct Location &wpB, const struct Location &wpC,
+                                                struct Location &wpB1, struct Location &wpB2, struct Location &wpB3, int8_t &dir);
+                                                
+Vector2f geo2planar(Vector2f &ref, Vector2f &wp);
+Vector2f planar2geo(Vector2f &ref, Vector2f &wp);
+                                                
 #ifdef radians
 #error "Build is including Arduino base headers"
 #endif

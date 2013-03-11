@@ -140,3 +140,93 @@ void location_offset(struct Location *loc, float ofs_north, float ofs_east)
         loc->lng += dlng;
     }
 }
+
+/*
+ *  Generate turn center, entry, and exit waypoints based on three waypoints, in accordance with a "fly-by" waypoint type.
+ *  http://www.faa.gov/air_traffic/publications/atpubs/aim/aim0102.html
+ */
+bool generate_WP_flyby(const float radius, const struct Location &wpA, const struct Location &wpB, const struct Location &wpC,
+                       struct Location &wpB1, struct Location &wpB2, struct Location &wpB3, int8_t &dir)
+{
+    Vector2f b1, b2, b3, q1, q2, q_diff;
+    float ang;
+
+    Vector2f A(0, 0);
+
+    Vector2f Atmp(wpA.lat/1.0e7,wpA.lng/1.0e7);
+    Vector2f B(wpB.lat/1.0e7,wpB.lng/1.0e7);
+    Vector2f C(wpC.lat/1.0e7,wpC.lng/1.0e7);
+
+    B=geo2planar(Atmp,B);
+    C=geo2planar(Atmp,C);
+
+    B=B*RADIUS_OF_EARTH;
+    C=C*RADIUS_OF_EARTH;
+
+    q1=(B-A).normalized();
+    q2=(C-B).normalized();
+    q_diff=(q1-q2).normalized();
+
+    if( (q1.x * q2.y - q1.y * q2.x) > 0) {
+        dir = 1;        //Clockwise (Right)
+    } else {
+        dir = -1;       //Counterclockwise (Left)
+    }
+
+    ang=acos(-q1.x*q2.x-q1.y*q2.y)/2.0;
+    if(ang < 0.17 || ang > 1.39)      //radians
+    {
+        return false;
+    } else {
+
+        b2.x=B.x-(radius/sin(ang))*q_diff.x;
+        b2.y=B.y-(radius/sin(ang))*q_diff.y;
+
+        b1.x=B.x-(radius/tan(ang))*q1.x;
+        b1.y=B.y-(radius/tan(ang))*q1.y;
+
+        b3.x=B.x+(radius/tan(ang))*q2.x;
+        b3.y=B.y+(radius/tan(ang))*q2.y;
+
+        b1=b1/RADIUS_OF_EARTH;
+        b2=b2/RADIUS_OF_EARTH;
+        b3=b3/RADIUS_OF_EARTH;
+
+        b1=planar2geo(Atmp,b1);
+        b2=planar2geo(Atmp,b2);
+        b3=planar2geo(Atmp,b3);
+
+        wpB1=wpB;
+        wpB2=wpB;
+        wpB3=wpB;
+
+        wpB1.lat=b1.x*1e7;
+        wpB1.lng=b1.y*1e7;
+        wpB2.lat=b2.x*1e7;
+        wpB2.lng=b2.y*1e7;
+        wpB3.lat=b3.x*1e7;
+        wpB3.lng=b3.y*1e7;
+
+    }
+
+}
+
+Vector2f geo2planar(Vector2f &ref, Vector2f &wp)
+{
+    //x-North (latitude), y-East (Longitude)
+    Vector2f out;
+    out.x=radians((wp.x-ref.x));
+    out.y=radians((wp.y-ref.y)*cos(radians(ref.x)));
+
+    return out;
+}
+
+Vector2f planar2geo(Vector2f &ref, Vector2f &wp)
+{
+    //x-North (latitude), y-East (Longitude)
+    Vector2f out;
+    out.x=degrees(wp.x)+ref.x;
+    out.y=degrees(wp.y*(1/cos(radians(ref.x))))+ref.y;
+
+    return out;
+}
