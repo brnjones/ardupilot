@@ -209,7 +209,32 @@ static void wind_correct_bearing(int32_t &nav_bearing_cd)
 static void update_crosstrack(void)
 {
 #if L1_CONTROL
-    calc_L1_line(L1, prev_WP, next_WP, current_loc, L1_ref);
+    if(turndir==0){
+        calc_L1_line(L1, prev_WP, next_WP, current_loc, L1_ref);
+    } else {
+        switch(auto_turn){
+            case 0: //prior to turn, perform straight line following
+                if(location_passed_point(L1_ref, mission.nav_waypoints[0], wpB1_entry)){
+                    gcs_send_text_fmt(PSTR("Turning\n"));
+                    auto_turn=1;
+                }
+                calc_L1_line(L1, mission.nav_waypoints[0], mission.nav_waypoints[1], current_loc, L1_ref);
+                break;
+                
+            case 1: //in the turn.
+                if(location_passed_point(L1_ref, mission.nav_waypoints[1], wpB3_exit)){
+                    auto_turn=2;
+                }
+                calc_L1_circ(L1, g.loiter_radius, wpB2_center, current_loc, L1_ref, turndir);
+                break;
+            
+            case 2: //exiting turn.
+                calc_L1_line(L1,wpB3_exit, mission.nav_waypoints[3],current_loc, L1_ref);
+                gcs_send_text_fmt(PSTR("Done Turning\n"));
+                auto_turn=3;
+                break;
+        }
+    }
     calc_nu_cd();
 #else
     wind_correct_bearing(nav_bearing_cd);

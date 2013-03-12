@@ -255,7 +255,15 @@ static void do_takeoff()
 
 static void do_nav_wp()
 {
-    set_next_WP(&next_nav_command);
+    if(generate_WP_flyby(g.loiter_radius, mission.nav_waypoints[0],mission.nav_waypoints[1],mission.nav_waypoints[2], wpB1_entry, wpB2_center, wpB3_exit, turndir))
+    {
+        //set_next_WP(&wpB1_entry);
+        set_next_WP(&next_nav_command);
+        auto_turn=0;
+    } else {
+        set_next_WP(&next_nav_command);
+        turndir=0;
+    }
 }
 
 static void do_land()
@@ -390,14 +398,22 @@ static bool verify_nav_wp()
         return true;
     }
 
-    // have we flown past the waypoint?
-    if (location_passed_point(current_loc, prev_WP, next_WP)) {
-        gcs_send_text_fmt(PSTR("Passed Waypoint #%i dist %um"),
-                          (unsigned)mission.command_index(),
-                          (unsigned)get_distance(&current_loc, &next_WP));
-        return true;
+    if(turndir==0){
+        // have we flown past the waypoint?
+        if (location_passed_point(current_loc, prev_WP, next_WP)) {
+            gcs_send_text_fmt(PSTR("Passed Waypoint #%i dist %um"),
+                              (unsigned)mission.command_index(),
+                              (unsigned)get_distance(&current_loc, &next_WP));
+            return true;
+        }
+    } else {
+            if (auto_turn==3) {
+            gcs_send_text_fmt(PSTR("Exiting Turn, Passed Waypoint #%i dist %um"),
+                              (unsigned)mission.command_index(),
+                              (unsigned)get_distance(&current_loc, &next_WP));
+            return true;
+        }
     }
-
     return false;
 }
 

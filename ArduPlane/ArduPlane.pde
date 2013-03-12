@@ -380,6 +380,16 @@ static uint8_t non_nav_command_index;
 static uint8_t nav_command_ID          = NO_COMMAND;
 static uint8_t non_nav_command_ID      = NO_COMMAND;
 
+//This is the turning state
+// 0=Prior to turn
+// 1=Currently Turning
+// 2=exiting turn
+static uint8_t auto_turn=0;
+//Intermediate waypoints for turns.
+static struct Location wpB1_entry, wpB2_center, wpB3_exit;
+//Turn direction for the turn. 1= Counter Clockwise, -1= Clockwise, 0= do not turn.
+int8_t turndir=1;
+
 #if L1_CONTROL
 ////////////////////////////////////////////////////////////////////////////////
 // L1 Control
@@ -388,6 +398,8 @@ static int32_t nu_cd;
 struct Location L1_ref;
 static uint8_t L1=L1_REFERENCE_LENGTH;
 #endif
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Airspeed
 ////////////////////////////////////////////////////////////////////////////////
