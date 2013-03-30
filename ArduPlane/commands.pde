@@ -175,6 +175,7 @@ void init_home()
     // Save Home to EEPROM - Command 0
     // -------------------
     mission.set_cmd_with_index(home, 0);
+    mission.set_home(home);
 
     // Save prev loc
     // -------------
