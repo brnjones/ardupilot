@@ -59,7 +59,7 @@
 #endif
 
 #if L1_CONTROL == ENABLED
- #include <AP_L1_Control.h>
+#include <AP_L1_Control.h>
 #endif
 
 // Pre-AP_HAL compatibility
