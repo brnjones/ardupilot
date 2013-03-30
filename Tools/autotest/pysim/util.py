@@ -120,7 +120,7 @@ def start_SIL(atype, valgrind=False, wipe=False, height=None):
     cmd=""
     if valgrind and os.path.exists('/usr/bin/valgrind'):
         cmd += 'valgrind -q --log-file=%s-valgrind.log ' % atype
-    cmd += reltopdir('tmp/%s.build/%s.elf' % (atype, atype))
+    cmd += reltopdir('/tmp/%s.build/%s.elf' % (atype, atype))
     if wipe:
         cmd += ' -w'
     if height is not None:
