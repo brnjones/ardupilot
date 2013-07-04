@@ -59,6 +59,9 @@
 #include <AP_L1_Control.h>
 #include <AP_RCMapper.h>        // RC input mapping library
 
+#include <AP_Path.h>
+#include <AP_Path_Basic.h>
+
 // Pre-AP_HAL compatibility
 #include "compat.h"
 
@@ -233,6 +236,7 @@ AP_AHRS_DCM ahrs(&ins, g_gps);
 
 static AP_L1_Control L1_controller(&ahrs);
 
+
 #if CONFIG_HAL_BOARD == HAL_BOARD_AVR_SITL
 SITL sitl;
 #endif
@@ -249,6 +253,10 @@ static GCS_MAVLINK gcs3;
 
 // selected navigation controller
 static AP_Navigation *nav_controller = &L1_controller;
+
+
+static AP_Path_Basic path(&ahrs, &L1_controller);
+static AP_Path *path_controller = &path;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Analog Inputs
