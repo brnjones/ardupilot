@@ -81,6 +81,10 @@ static bool set_mode(uint8_t mode)
             success = flip_init(ignore_checks);
             break;
 
+        case PLANE:
+            success = plane_init(ignore_checks);
+            break;
+
 #if AUTOTUNE_ENABLED == ENABLED
         case AUTOTUNE:
             success = autotune_init(ignore_checks);
@@ -183,6 +187,10 @@ static void update_flight_mode()
 
         case FLIP:
             flip_run();
+            break;
+
+        case PLANE:
+            plane_run();
             break;
 
 #if AUTOTUNE_ENABLED == ENABLED
@@ -309,6 +317,9 @@ print_flight_mode(AP_HAL::BetterStream *port, uint8_t mode)
         break;
     case POSHOLD:
         port->print_P(PSTR("POSHOLD"));
+        break;
+    case PLANE:
+        port->print_P(PSTR("PLANE"));
         break;
     default:
         port->printf_P(PSTR("Mode(%u)"), (unsigned)mode);
