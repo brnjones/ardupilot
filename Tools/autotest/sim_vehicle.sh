@@ -146,6 +146,9 @@ EXTRA_SIM=""
 
 # modify build target based on copter frame type
 case $FRAME in
+    Rascucopter)
+	BUILD_TARGET="sitl"
+	;;
     +|quad)
 	BUILD_TARGET="sitl"
         EXTRA_SIM="--frame=quad"
@@ -247,7 +250,12 @@ case $VEHICLE in
         fi
         ;;
     ArduCopter)
-        RUNSIM="nice $autotest/pysim/sim_multicopter.py --home=$SIMHOME $EXTRA_SIM"
+	if [ "$FRAME" == "Rascucopter" ];
+	then
+	    RUNSIM="nice $autotest/jsbsim/runsim.py --home=$SIMHOME --simin=$SIMIN_PORT --simout=$SIMOUT_PORT --fgout=$FG_PORT --vehicle=Rascucopter $EXTRA_SIM"
+	else
+            RUNSIM="nice $autotest/pysim/sim_multicopter.py --home=$SIMHOME $EXTRA_SIM"
+	fi
         PARMS="copter_params.parm"
         ;;
     APMrover2)

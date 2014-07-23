@@ -169,6 +169,7 @@ parser.add_option("--simin",   help="SITL input (IP:port)",          default="12
 parser.add_option("--simout",  help="SITL output (IP:port)",         default="127.0.0.1:5501")
 parser.add_option("--fgout",   help="FG display output (IP:port)",   default="127.0.0.1:5503")
 parser.add_option("--home",    type='string', help="home lat,lng,alt,hdg (required)")
+parser.add_option("--vehicle", type='string', help="(Rascal, Rascucopter)". default="Rascal")
 parser.add_option("--script",  type='string', help='jsbsim model script', default='jsbsim/rascal_test.xml')
 parser.add_option("--options", type='string', help='jsbsim startup options')
 parser.add_option("--elevon", action='store_true', default=False, help='assume elevon input')
@@ -178,6 +179,8 @@ parser.add_option("--wind", dest="wind", help="Simulate wind (speed,direction,tu
 
 (opts, args) = parser.parse_args()
 
+import pdb
+pdb.set_trace()
 for m in [ 'home', 'script' ]:
     if not opts.__dict__[m]:
         print("Missing required option '%s'" % m)
