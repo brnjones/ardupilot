@@ -85,8 +85,8 @@
     <contact type="BOGEY" name="TAIL_LG">
       <location unit="IN">
         <x> 68.9 </x>
-        <y> 0 </y>
-        <z> -13.1 </z>
+        <y>  0.0 </y>
+        <z> -4.0 </z>
       </location>
       <static_friction> 8.0 </static_friction>
       <dynamic_friction> 5.0 </dynamic_friction>
@@ -100,7 +100,7 @@
   </ground_reactions>
 
   <propulsion>
-    <engine file="Zenoah_G-26A" name="forward">
+    <engine file="Zenoah_G-26A" name="FORWARD">
       <location unit="IN">
         <x> 36 </x>
         <y> 0 </y>
@@ -127,7 +127,7 @@
       </thruster>
     </engine>
     <!-- front-right and back-left spin counter-clockwise-->
-    <engine file="a2830-12" name="front_right">
+    <engine file="a2830-12" name="QUAD_FRONT_RIGHT">
       <location unit="FT">
         <x>  33.00  </x>
         <y>   3.00  </y>
@@ -154,7 +154,7 @@
         <p_factor> 10 </p_factor>
       </thruster>
     </engine>
-    <engine file="a2830-12" name="front_left">
+    <engine file="a2830-12" name="QUAD_FRONT_LEFT">
       <location unit="FT">
         <x>  33.00 </x>
         <y>  -3.00 </y>
@@ -181,7 +181,7 @@
         <p_factor> 10 </p_factor>
       </thruster>
     </engine>
-    <engine file="a2830-12" name="back_right">
+    <engine file="a2830-12" name="QUAD_BACK_RIGHT">
       <location unit="FT">
         <x>  39.00 </x>
         <y>   3.00 </y>
@@ -208,7 +208,7 @@
         <p_factor> 10 </p_factor>
       </thruster>
     </engine>
-    <engine file="a2830-12" name="back_left">
+    <engine file="a2830-12" name="QUAD_BACK_LEFT">
       <location unit="FT">
         <x>  39.00 </x>
         <y>  -3.00 </y>

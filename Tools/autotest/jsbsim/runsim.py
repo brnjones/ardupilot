@@ -196,6 +196,7 @@ cmd = "JSBSim --realtime --suspend --nice --simulation-rate=1000 --logdirectivef
 if opts.options:
     cmd += ' %s' % opts.options
 
+print("Running Command: \n\"%s\"" % cmd)
 jsb = pexpect.spawn(cmd, logfile=sys.stdout, timeout=10)
 jsb.delaybeforesend = 0
 util.pexpect_autoclose(jsb)
