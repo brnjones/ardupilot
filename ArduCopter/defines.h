@@ -106,7 +106,8 @@
 #define AUTOTUNE    15                  // autotune the vehicle's roll and pitch gains
 #define POSHOLD     16                  // position hold with manual override
 #define PLANE       17
-#define NUM_MODES   18
+#define PLANE_FBW   18
+#define NUM_MODES   19
 
 
 // CH_6 Tuning

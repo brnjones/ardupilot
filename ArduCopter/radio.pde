@@ -30,14 +30,32 @@ static void init_rc_in()
     g.rc_2.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
     g.rc_4.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
+    /*
     //set auxiliary servo ranges
     g.rc_5.set_range(0,1000);
     g.rc_6.set_range(0,1000);
     g.rc_7.set_range(0,1000);
     g.rc_8.set_range(0,1000);
-
+    */
+    g.rc_5.set_angle(4500);
+    g.rc_6.set_angle(4500);
+    g.rc_8.set_angle(4500);
     // set default dead zones
     default_dead_zones();
+
+    //For backwards plane compatibility.
+    /*
+    channel_roll     = RC_Channel::rc_channel(RC_Channel_aux::k_aileron);
+    channel_pitch    = RC_Channel::rc_channel(RC_Channel_aux::k_elevator);
+    //channel_throttle = RC_Channel::rc_channel(rcmap.throttle()-1);
+    channel_rudder   = RC_Channel::rc_channel(RC_Channel_aux::k_rudder);
+    */
+
+    channel_roll     = RC_Channel::rc_channel(4);
+    channel_pitch    = RC_Channel::rc_channel(5);
+    //channel_throttle = RC_Channel::rc_channel(rcmap.throttle()-1);
+    //channel_rudder   = RC_Channel::rc_channel(7);
+
 }
 
  // init_rc_out -- initialise motors and check if pilot wants to perform ESC calibration

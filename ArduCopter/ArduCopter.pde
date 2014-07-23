@@ -153,6 +153,8 @@
 #include <AP_Parachute.h>		// Parachute release library
 #endif
 
+#include <APM_Control.h>
+
 // AP_HAL to Arduino compatibility layer
 #include "compat.h"
 // Configuration
@@ -544,6 +546,33 @@ static uint32_t loiter_time;                    // How long have we been loiteri
 // Flip
 ////////////////////////////////////////////////////////////////////////////////
 static Vector3f flip_orig_attitude;         // original copter attitude before flip
+
+////////////////////////////////////////////////////////////////////////////////
+// Plane
+////////////////////////////////////////////////////////////////////////////////
+// key aircraft parameters passed to multiple libraries
+static AP_Vehicle::FixedWing plane_aparm;
+
+// scaled roll limit based on pitch
+static int32_t roll_limit_cd = 4500;
+static int32_t pitch_limit_min_cd = 2000;
+
+// The instantaneous desired bank angle.  Hundredths of a degree
+static int32_t nav_roll_cd;
+
+// The instantaneous desired pitch angle.  Hundredths of a degree
+static int32_t nav_pitch_cd;
+
+// Attitude to servo controllers
+static AP_RollController  rollController(ahrs, plane_aparm, DataFlash);
+static AP_PitchController pitchController(ahrs, plane_aparm, DataFlash);
+static AP_YawController   yawController(ahrs, plane_aparm);
+
+// primary control channels
+static RC_Channel *channel_roll;
+static RC_Channel *channel_pitch;
+static RC_Channel *channel_throttle;
+static RC_Channel *channel_rudder;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Battery Sensors
@@ -1132,6 +1161,9 @@ static void three_hz_loop()
 // one_hz_loop - runs at 1Hz
 static void one_hz_loop()
 {
+    fprintf(stderr, "nav_pitch: %d, nav_roll: %d\n", nav_pitch_cd, nav_roll_cd);
+    hal.console->printf_P(PSTR("G_Dt_max=%d\n"), nav_pitch_cd);
+
     if (g.log_bitmask != 0) {
         Log_Write_Data(DATA_AP_STATE, ap.value);
     }

@@ -85,6 +85,10 @@ static bool set_mode(uint8_t mode)
             success = plane_init(ignore_checks);
             break;
 
+        case PLANE_FBW:
+            success = plane_fbw_init(ignore_checks);
+            break;
+
 #if AUTOTUNE_ENABLED == ENABLED
         case AUTOTUNE:
             success = autotune_init(ignore_checks);
@@ -191,6 +195,10 @@ static void update_flight_mode()
 
         case PLANE:
             plane_run();
+            break;
+
+        case PLANE_FBW:
+            plane_fbw_run();
             break;
 
 #if AUTOTUNE_ENABLED == ENABLED
@@ -321,6 +329,9 @@ print_flight_mode(AP_HAL::BetterStream *port, uint8_t mode)
     case PLANE:
         port->print_P(PSTR("PLANE"));
         break;
+    case PLANE_FBW:
+        port->print_P(PSTR("PLANE_FBW"));
+    break;
     default:
         port->printf_P(PSTR("Mode(%u)"), (unsigned)mode);
         break;

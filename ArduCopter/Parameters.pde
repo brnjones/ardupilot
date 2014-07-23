@@ -287,42 +287,42 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: FLTMODE1
     // @DisplayName: Flight Mode 1
     // @Description: Flight mode when Channel 5 pwm is <= 1230
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane,18:Plane_FBW
     // @User: Standard
     GSCALAR(flight_mode1, "FLTMODE1",               FLIGHT_MODE_1),
 
     // @Param: FLTMODE2
     // @DisplayName: Flight Mode 2
     // @Description: Flight mode when Channel 5 pwm is >1230, <= 1360
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane,18:Plane_FBW
     // @User: Standard
     GSCALAR(flight_mode2, "FLTMODE2",               FLIGHT_MODE_2),
 
     // @Param: FLTMODE3
     // @DisplayName: Flight Mode 3
     // @Description: Flight mode when Channel 5 pwm is >1360, <= 1490
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane,18:Plane_FBW
     // @User: Standard
     GSCALAR(flight_mode3, "FLTMODE3",               FLIGHT_MODE_3),
 
     // @Param: FLTMODE4
     // @DisplayName: Flight Mode 4
     // @Description: Flight mode when Channel 5 pwm is >1490, <= 1620
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane,18:Plane_FBW
     // @User: Standard
     GSCALAR(flight_mode4, "FLTMODE4",               FLIGHT_MODE_4),
 
     // @Param: FLTMODE5
     // @DisplayName: Flight Mode 5
     // @Description: Flight mode when Channel 5 pwm is >1620, <= 1749
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane,18:Plane_FBW
     // @User: Standard
     GSCALAR(flight_mode5, "FLTMODE5",               FLIGHT_MODE_5),
 
     // @Param: FLTMODE6
     // @DisplayName: Flight Mode 6
     // @Description: Flight mode when Channel 5 pwm is >=1750
-    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane
+    // @Values: 0:Stabilize,1:Acro,2:AltHold,3:Auto,4:Guided,5:Loiter,6:RTL,7:Circle,9:Land,10:OF_Loiter,11:Drift,13:Sport,16:PosHold,17:Plane,18:Plane_FBW
     // @User: Standard
     GSCALAR(flight_mode6, "FLTMODE6",               FLIGHT_MODE_6),
 
@@ -887,6 +887,37 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @User: Standard
     GGROUP(p_loiter_pos, "HLD_LAT_", AC_P),
 
+    // @Param: LIM_ROLL_CD
+    // @DisplayName: Maximum Bank Angle
+    // @Description: The maximum commanded bank angle in either direction
+    // @Units: centi-Degrees
+    // @Range: 0 9000
+    // @Increment: 1
+    // @User: Standard
+    GSCALAR(roll_limit_cd,          "LIM_ROLL_CD",    4500),
+
+    // @Param: SCALING_SPEED
+    // @DisplayName: speed used for speed scaling calculations
+    // @Description: Airspeed in m/s to use when calculating surface speed scaling. Note that changing this value will affect all PID values
+    // @Units: m/s
+    // @User: Advanced
+    GSCALAR(scaling_speed,        "SCALING_SPEED",    15),
+
+    // @Param: TRIM_PITCH_CD
+    // @DisplayName: Pitch angle offset
+    // @Description: offset to add to pitch - used for in-flight pitch trimming. It is recommended that instead of using this parameter you level your plane correctly on the ground for good flight attitude.
+    // @Units: centi-Degrees
+    // @User: Advanced
+    GSCALAR(pitch_trim_cd,        "TRIM_PITCH_CD",  0),
+
+    // @Param: KFF_THR2PTCH
+    // @DisplayName: Throttle to Pitch Mix
+    // @Description: Throttle to pitch feed-forward gain.
+    // @Range: 0 5
+    // @Increment: 0.01
+    // @User: Advanced
+    GSCALAR(kff_throttle_to_pitch,  "KFF_THR2PTCH",   0),
+
     // variables not in the g class which contain EEPROM saved variables
 
 #if CAMERA == ENABLED
@@ -940,6 +971,20 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Path: ../libraries/AC_AttitudeControl/AC_AttitudeControl.cpp
     GOBJECT(attitude_control, "ATC_", AC_AttitudeControl),
 #endif
+    
+//Plane
+    // @Group: RLL2SRV_
+    // @Path: ../libraries/APM_Control/AP_RollController.cpp
+    GOBJECT(rollController,         "RLL2SRV_",   AP_RollController),
+
+    // @Group: PTCH2SRV_
+    // @Path: ../libraries/APM_Control/AP_PitchController.cpp
+    GOBJECT(pitchController,        "PTCH2SRV_",  AP_PitchController),
+
+    // @Group: YAW2SRV_
+    // @Path: ../libraries/APM_Control/AP_YawController.cpp
+    GOBJECT(yawController,          "YAW2SRV_",   AP_YawController),
+/////////////////////
 
     // @Group: POSCON_
     // @Path: ../libraries/AC_AttitudeControl/AC_PosControl.cpp

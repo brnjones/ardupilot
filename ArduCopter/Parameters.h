@@ -173,6 +173,17 @@ public:
         k_param_serial2_baud_old, // deprecated
 
         //
+        // 95: Plane
+        //
+        k_param_pitch_trim_cd = 120,
+        k_param_kff_throttle_to_pitch,
+        k_param_scaling_speed,
+        k_param_roll_limit_cd,
+        k_param_rollController,
+        k_param_pitchController,
+        k_param_yawController,
+
+        //
         // 140: Sensor parameters
         //
         k_param_imu = 140, // deprecated - can be deleted
@@ -370,6 +381,14 @@ public:
     AP_Int8         flight_mode6;
     AP_Int8         simple_modes;
 
+    // Plane
+    //
+
+    AP_Int16 roll_limit_cd;
+    AP_Float scaling_speed;
+    AP_Float kff_throttle_to_pitch;
+    AP_Int16 pitch_trim_cd;
+        
     // Misc
     //
     AP_Int16        log_bitmask;
