@@ -148,6 +148,7 @@ EXTRA_SIM=""
 case $FRAME in
     Rascucopter)
 	BUILD_TARGET="sitl"
+	EXTRA_PARM="param set FRAME 1;"
 	;;
     +|quad)
 	BUILD_TARGET="sitl"

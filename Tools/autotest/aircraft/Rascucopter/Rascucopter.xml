@@ -56,7 +56,7 @@
       <location unit="IN">
         <x> 33.1 </x>
         <y> -12.9 </y>
-        <z> -13.1 </z>
+        <z> -6.0 </z>
       </location>
       <static_friction> 0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -71,7 +71,7 @@
       <location unit="IN">
         <x> 33.1 </x>
         <y> 12.9 </y>
-        <z> -13.1 </z>
+        <z> -6.0 </z>
       </location>
       <static_friction> 0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -86,7 +86,7 @@
       <location unit="IN">
         <x> 68.9 </x>
         <y>  0.0 </y>
-        <z> -4.0 </z>
+        <z> -6.0 </z>
       </location>
       <static_friction> 8.0 </static_friction>
       <dynamic_friction> 5.0 </dynamic_friction>
@@ -100,32 +100,6 @@
   </ground_reactions>
 
   <propulsion>
-    <engine file="Zenoah_G-26A" name="FORWARD">
-      <location unit="IN">
-        <x> 36 </x>
-        <y> 0 </y>
-        <z> 0 </z>
-      </location>
-      <orient unit="DEG">
-        <roll> 0.0 </roll>
-        <pitch> 0 </pitch>
-        <yaw> 0 </yaw>
-      </orient>
-      <feed>0</feed>
-      <thruster file="18x8">
-        <location unit="IN">
-          <x> 1 </x>
-          <y> 0 </y>
-          <z> 0 </z>
-        </location>
-        <orient unit="DEG">
-          <roll> 0.0 </roll>
-          <pitch> 0.0 </pitch>
-          <yaw> 0.0 </yaw>
-        </orient>
-        <p_factor>1.0</p_factor>
-      </thruster>
-    </engine>
     <!-- front-right and back-left spin counter-clockwise-->
     <engine file="a2830-12" name="QUAD_FRONT_RIGHT">
       <location unit="FT">
@@ -143,6 +117,33 @@
         <location unit="FT">
           <x>  33.00 </x>
           <y>   3.00  </y>
+          <z>   0.05 </z>
+        </location>
+        <orient unit="DEG">
+          <pitch> 90.00 </pitch>
+          <roll>   0.00 </roll>
+          <yaw>    0.00 </yaw>
+        </orient>
+        <sense> -1 </sense>
+        <p_factor> 10 </p_factor>
+      </thruster>
+    </engine>
+    <engine file="a2830-12" name="QUAD_BACK_LEFT">
+      <location unit="FT">
+        <x>  39.00 </x>
+        <y>  -3.00 </y>
+        <z>   0.00 </z>
+      </location>
+      <orient unit="DEG">
+        <pitch> 90.00 </pitch>
+        <roll>   0.00 </roll>
+        <yaw>    0.00 </yaw>
+      </orient>
+      <feed>0</feed>
+      <thruster file="prop10x4.5">
+        <location unit="FT">
+          <x>  39.00 </x>
+          <y>  -3.00 </y>
           <z>   0.05 </z>
         </location>
         <orient unit="DEG">
@@ -208,31 +209,30 @@
         <p_factor> 10 </p_factor>
       </thruster>
     </engine>
-    <engine file="a2830-12" name="QUAD_BACK_LEFT">
-      <location unit="FT">
-        <x>  39.00 </x>
-        <y>  -3.00 </y>
-        <z>   0.00 </z>
+    <engine file="Zenoah_G-26A" name="FORWARD">
+      <location unit="IN">
+        <x> 36 </x>
+        <y> 0 </y>
+        <z> 0 </z>
       </location>
       <orient unit="DEG">
-        <pitch> 90.00 </pitch>
-        <roll>   0.00 </roll>
-        <yaw>    0.00 </yaw>
+        <roll> 0.0 </roll>
+        <pitch> 0 </pitch>
+        <yaw> 0 </yaw>
       </orient>
       <feed>0</feed>
-      <thruster file="prop10x4.5">
-        <location unit="FT">
-          <x>  39.00 </x>
-          <y>  -3.00 </y>
-          <z>   0.05 </z>
+      <thruster file="18x8">
+        <location unit="IN">
+          <x> 1 </x>
+          <y> 0 </y>
+          <z> 0 </z>
         </location>
         <orient unit="DEG">
-          <pitch> 90.00 </pitch>
-          <roll>   0.00 </roll>
-          <yaw>    0.00 </yaw>
+          <roll> 0.0 </roll>
+          <pitch> 0.0 </pitch>
+          <yaw> 0.0 </yaw>
         </orient>
-        <sense> -1 </sense>
-        <p_factor> 10 </p_factor>
+        <p_factor>1.0</p_factor>
       </thruster>
     </engine>
     <tank type="FUEL">
