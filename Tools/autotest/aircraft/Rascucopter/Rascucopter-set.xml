@@ -10,8 +10,8 @@ dynamics model, and external 3D model.
 <PropertyList>
  <sim>
 
-  <description>Rascal 110 (R/C)</description>
-  <author>Lee Elliot (3D) Dave Culp (JSBsim dynamics) and Curt Olson</author>
+  <description>Rascucopter</description>
+  <author>Jacob Huffman (Quadification) Lee Elliot (3D) Dave Culp (JSBsim dynamics) and Curt Olson</author>
   <aircraft-version>0.1</aircraft-version>
   <model-hz>400</model-hz>
 
@@ -20,17 +20,8 @@ dynamics model, and external 3D model.
   </startup>
 
   <flight-model>jsb</flight-model>
-  <aero>Rascal110-JSBSim</aero>
+  <aero>Rascucopter</aero>
   <fuel-fraction>0.8</fuel-fraction>
-
-  <systems>
-   <autopilot>
-    <path>Aircraft/Rascal/Systems/110-autopilot.xml</path>
-   </autopilot>
-   <electrical>
-    <path>Aircraft/Rascal/Systems/electrical.xml</path>
-   </electrical>
-  </systems>
 
   <sound>
    <path>Aircraft/Generic/generic-sound.xml</path>
@@ -54,10 +45,10 @@ dynamics model, and external 3D model.
    </config>
   </view>
 
-  <submodels>
-    <serviceable type="bool">1</serviceable>
-    <path>Aircraft/Rascal/Rascal-submodels.xml</path>
-  </submodels>
+  <!-- <submodels> -->
+  <!--   <serviceable type="bool">1</serviceable> -->
+  <!--   <path>Aircraft/Rascal/Rascal-submodels.xml</path> -->
+  <!-- </submodels> -->
 
   <view n="1">
    <config>
@@ -95,23 +86,23 @@ dynamics model, and external 3D model.
    </config>
   </view>
 
-  <multiplay>
-    <chat_display>1</chat_display>
-    <generic>
-      <int type="bool">0</int>  <!-- smoke -->
-      <int type="bool">0</int>  <!-- trajectory markers -->
-    </generic>
-  </multiplay>
+  <!-- <multiplay> -->
+  <!--   <chat_display>1</chat_display> -->
+  <!--   <generic> -->
+  <!--     <int type="bool">0</int> -->  <!-- smoke -->
+  <!--     <int type="bool">0</int> -->  <!-- trajectory markers -->
+  <!--   </generic> -->
+  <!-- </multiplay> -->
 
-  <help>
-    <title>Rascal 110 (Sig Mfg)</title>
-    <line>Cruise speed: 60 kts</line>
-    <line>Never-exceed (Vne): 85 kts</line>
-    <line>Best Glide (Vglide): 20 kts</line>
-    <line>Maneuvering (Va): 50 kts</line>
-    <line>Approach speed: 20-25 kts</line>
-    <line>Stall speed (Vs): 15 kts</line>
-  </help>
+  <!-- <help> -->
+  <!--   <title>Rascal 110 (Sig Mfg)</title> -->
+  <!--   <line>Cruise speed: 60 kts</line> -->
+  <!--   <line>Never-exceed (Vne): 85 kts</line> -->
+  <!--   <line>Best Glide (Vglide): 20 kts</line> -->
+  <!--   <line>Maneuvering (Va): 50 kts</line> -->
+  <!--   <line>Approach speed: 20-25 kts</line> -->
+  <!--   <line>Stall speed (Vs): 15 kts</line> -->
+  <!-- </help> -->
 
  </sim>
 
@@ -127,6 +118,7 @@ dynamics model, and external 3D model.
              left.add("/apm/elevator");
              left.add("/apm/rudder");
              left.add("/apm/throttle");
+	     left.add("/apm/throttlea");
 
              var right = screen.display.new(-250, 20);
              right.add("/apm/pitch");
@@ -140,35 +132,19 @@ dynamics model, and external 3D model.
   </rascal>
  </nasal>
 
- <yasim>
-  <Rascal110>
-   <pilot-lb>2</pilot-lb>
-  </Rascal110>
- </yasim>
-
- <input>
-   <keyboard include="Rascal-keyboard.xml"/>
- </input>
-
  <controls>
   <flight>
    <aileron-trim>-0.01</aileron-trim>   <!-- fixed -->
    <elevator-trim>0.00</elevator-trim> <!-- controllable -->
    <rudder-trim>0.00</rudder-trim>     <!-- fixed -->
   </flight>
-  <engines>
-   <engine n="0">
-    <magnetos>3</magnetos>
-   </engine>
-  </engines>
-  <smoke alias="/sim/multiplay/generic/int[0]"/>
-  <trajectory-markers alias="/sim/multiplay/generic/int[1]"/>
+  <!-- <trajectory-markers alias="/sim/multiplay/generic/int[1]"/> -->
  </controls>
 
- <engines>
-  <engine>
-   <rpm type="double">700</rpm>
-  </engine>
- </engines>
+ <!-- <engines> -->
+ <!--  <engine> -->
+ <!--   <rpm type="double">700</rpm> -->
+ <!--  </engine> -->
+ <!-- </engines> -->
 
 </PropertyList>

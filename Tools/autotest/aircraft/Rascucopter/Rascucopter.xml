@@ -56,7 +56,7 @@
       <location unit="IN">
         <x> 33.1 </x>
         <y> -12.9 </y>
-        <z> -6.0 </z>
+        <z> -2.0 </z>
       </location>
       <static_friction> 0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -71,7 +71,7 @@
       <location unit="IN">
         <x> 33.1 </x>
         <y> 12.9 </y>
-        <z> -6.0 </z>
+        <z> -2.0 </z>
       </location>
       <static_friction> 0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -86,7 +86,7 @@
       <location unit="IN">
         <x> 68.9 </x>
         <y>  0.0 </y>
-        <z> -6.0 </z>
+        <z> -2.0 </z>
       </location>
       <static_friction> 8.0 </static_friction>
       <dynamic_friction> 5.0 </dynamic_friction>
@@ -94,6 +94,69 @@
       <spring_coeff unit="LBS/FT"> 480 </spring_coeff>
       <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff>
       <max_steer unit="DEG"> 360.0 </max_steer>
+      <brake_group> NONE </brake_group>
+      <retractable>0</retractable>
+    </contact>
+    <contact type="STRUCTURE" name="CONTACT_FRONT_RIGHT">
+      <location unit="IN">
+        <x> 33.0 </x>
+        <y>  3.0 </y>
+        <z>  0.0 </z>
+      </location>
+      <static_friction>  0.8 </static_friction>
+      <dynamic_friction> 0.5 </dynamic_friction>
+      <spring_coeff unit="N/M"> 500 </spring_coeff>
+      <damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+      <damping_coeff_rebound type="SQUARE" unit="N/M2/SEC2"> 1000 </damping_coeff_rebound>
+      <max_steer unit="DEG"> 0.0 </max_steer>
+      <brake_group> NONE </brake_group>
+      <retractable>0</retractable>
+    </contact>
+
+    <contact type="STRUCTURE" name="CONTACT_BACK_LEFT">
+      <location unit="IN">
+        <x> 39.0 </x>
+        <y> -3.0 </y>
+        <z>  0.0 </z>
+      </location>
+      <static_friction>  0.8 </static_friction>
+      <dynamic_friction> 0.5 </dynamic_friction>
+      <spring_coeff unit="N/M"> 500 </spring_coeff>
+      <damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+      <damping_coeff_rebound type="SQUARE" unit="N/M2/SEC2"> 1000 </damping_coeff_rebound>
+      <max_steer unit="DEG"> 0.0 </max_steer>
+      <brake_group> NONE </brake_group>
+      <retractable>0</retractable>
+    </contact>
+
+    <contact type="STRUCTURE" name="CONTACT_FRONT_LEFT">
+      <location unit="IN">
+        <x> 33.0 </x>
+        <y> -3.0 </y>
+        <z>  0.0 </z>
+      </location>
+      <static_friction>  0.8 </static_friction>
+      <dynamic_friction> 0.5 </dynamic_friction>
+      <spring_coeff unit="N/M"> 500 </spring_coeff>
+      <damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+      <damping_coeff_rebound type="SQUARE" unit="N/M2/SEC2"> 1000 </damping_coeff_rebound>
+      <max_steer unit="DEG"> 0.0 </max_steer>
+      <brake_group> NONE </brake_group>
+      <retractable>0</retractable>
+    </contact>
+
+    <contact type="STRUCTURE" name="CONTACT_BACK_RIGHT">
+      <location unit="IN">
+        <x> 39.0 </x>
+        <y> 3.0 </y>
+        <z> 0.0 </z>
+      </location>
+      <static_friction>  0.8 </static_friction>
+      <dynamic_friction> 0.5 </dynamic_friction>
+      <spring_coeff unit="N/M"> 500 </spring_coeff>
+      <damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+      <damping_coeff_rebound type="SQUARE" unit="N/M2/SEC2"> 1000 </damping_coeff_rebound>
+      <max_steer unit="DEG"> 0.0 </max_steer>
       <brake_group> NONE </brake_group>
       <retractable>0</retractable>
     </contact>
@@ -125,7 +188,6 @@
           <yaw>    0.00 </yaw>
         </orient>
         <sense> -1 </sense>
-        <p_factor> 10 </p_factor>
       </thruster>
     </engine>
     <engine file="a2830-12" name="QUAD_BACK_LEFT">
@@ -152,7 +214,6 @@
           <yaw>    0.00 </yaw>
         </orient>
         <sense> -1 </sense>
-        <p_factor> 10 </p_factor>
       </thruster>
     </engine>
     <engine file="a2830-12" name="QUAD_FRONT_LEFT">
@@ -179,7 +240,6 @@
           <yaw>    0.00 </yaw>
         </orient>
         <sense> 1 </sense>
-        <p_factor> 10 </p_factor>
       </thruster>
     </engine>
     <engine file="a2830-12" name="QUAD_BACK_RIGHT">
@@ -206,7 +266,6 @@
           <yaw>    0.00 </yaw>
         </orient>
         <sense> 1 </sense>
-        <p_factor> 10 </p_factor>
       </thruster>
     </engine>
     <engine file="Zenoah_G-26A" name="FORWARD">
@@ -232,7 +291,6 @@
           <pitch> 0.0 </pitch>
           <yaw> 0.0 </yaw>
         </orient>
-        <p_factor>1.0</p_factor>
       </thruster>
     </engine>
     <tank type="FUEL">

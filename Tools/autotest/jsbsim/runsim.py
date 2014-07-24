@@ -65,7 +65,7 @@ def setup_template(home, vehicle):
     print("Wrote %s" % out)
     
 
-def process_sitl_input(buf):
+def process_sitl_input(buf, vehicle):
     '''process control changes from SITL sim'''
     control = list(struct.unpack('<14H', buf))
     pwm = control[:11]
@@ -75,42 +75,83 @@ def process_sitl_input(buf):
     wind.speed      = speed*0.01
     wind.direction  = direction*0.01
     wind.turbulance = turbulance*0.01
-    
-    aileron  = (pwm[0]-1500)/500.0
-    elevator = (pwm[1]-1500)/500.0
-    throttle = (pwm[2]-1000)/1000.0
-    if opts.revthr:
-        throttle = 1.0 - throttle
-    rudder   = (pwm[3]-1500)/500.0
+    if vehicle == "Rascal":
+        # Map inputs from 1000-2000 to 0-1 or -1 to 1
+        aileron  = (pwm[0]-1500)/500.0
+        elevator = (pwm[1]-1500)/500.0
+        throttle = (pwm[2]-1000)/1000.0
+        if opts.revthr:
+            throttle = 1.0 - throttle
+            rudder   = (pwm[3]-1500)/500.0
+            
+        if opts.elevon:
+            # fake an elevon plane
+            ch1 = aileron
+            ch2 = elevator
+            aileron  = (ch2-ch1)/2.0
+            # the minus does away with the need for RC2_REV=-1
+            elevator = -(ch2+ch1)/2.0
 
-    if opts.elevon:
-        # fake an elevon plane
-        ch1 = aileron
-        ch2 = elevator
-        aileron  = (ch2-ch1)/2.0
-        # the minus does away with the need for RC2_REV=-1
-        elevator = -(ch2+ch1)/2.0
-
-    if opts.vtail:
-        # fake an elevon plane
-        ch1 = elevator
-        ch2 = rudder
-        # this matches VTAIL_OUTPUT==2
-        elevator = (ch2-ch1)/2.0
-        rudder   = (ch2+ch1)/2.0
+        if opts.vtail:
+            # fake an elevon plane
+            ch1 = elevator
+            ch2 = rudder
+            # this matches VTAIL_OUTPUT==2
+            elevator = (ch2-ch1)/2.0
+            rudder   = (ch2+ch1)/2.0
         
-    if aileron != sitl_state.aileron:
+        if aileron != sitl_state.aileron:
+            jsb_set('fcs/aileron-cmd-norm', aileron)
+            sitl_state.aileron = aileron
+        if elevator != sitl_state.elevator:
+            jsb_set('fcs/elevator-cmd-norm', elevator)
+            sitl_state.elevator = elevator
+        if rudder != sitl_state.rudder:
+            jsb_set('fcs/rudder-cmd-norm', rudder)
+            sitl_state.rudder = rudder
+        if throttle != sitl_state.throttle:
+            jsb_set('fcs/throttle-cmd-norm', throttle)
+            sitl_state.throttle = throttle
+    elif vehicle == "Rascucopter":
+        throttle0 = (pwm[0]-1080)/1000.0
+        throttle1 = (pwm[1]-1080)/1000.0
+        throttle2 = (pwm[2]-1080)/1000.0
+        throttle3 = (pwm[3]-1080)/1000.0
+        throttle4 = (pwm[4]-1080)/1000.0
+        aileron = (pwm[5]-1500)/500.0
+        elevator =(pwm[6]-1500)/500.0
+        rudder = (pwm[7]-1500)/500.0
+        throttle0 = lock_to_range(throttle0, 0.0, 1.0)
+        throttle1 = lock_to_range(throttle1, 0.0, 1.0)
+        throttle2 = lock_to_range(throttle2, 0.0, 1.0)
+        throttle3 = lock_to_range(throttle3, 0.0, 1.0)
+        throttle4 = lock_to_range(throttle4, 0.0, 1.0)
+
+        # print("Outs: %s" % str([
+        #     throttle0,
+        #     throttle1,
+        #     throttle2,
+        #     throttle3,
+        #     throttle4]))
+        #TODO (Jacob): only update if values have changed
+        jsb_set('fcs/throttle-cmd-norm[0]', 0.0) #throttle0)
+        jsb_set('fcs/throttle-cmd-norm[1]', 0.0) #throttle1)
+        jsb_set('fcs/throttle-cmd-norm[2]', 0.0) #throttle2)
+        jsb_set('fcs/throttle-cmd-norm[3]', 0.0) #throttle3)
+        jsb_set('fcs/throttle-cmd-norm[4]', 0.0) #throttle4)
         jsb_set('fcs/aileron-cmd-norm', aileron)
-        sitl_state.aileron = aileron
-    if elevator != sitl_state.elevator:
         jsb_set('fcs/elevator-cmd-norm', elevator)
-        sitl_state.elevator = elevator
-    if rudder != sitl_state.rudder:
         jsb_set('fcs/rudder-cmd-norm', rudder)
-        sitl_state.rudder = rudder
-    if throttle != sitl_state.throttle:
-        jsb_set('fcs/throttle-cmd-norm', throttle)
-        sitl_state.throttle = throttle
+    else:
+        raise ValueError("Vehicle does not match predefined types")
+
+def lock_to_range(value, min_, max_):
+    if value < min_:
+        value = min_
+    elif value > max_:
+        value = max_
+    return value
+
 
 def update_wind(wind):
     '''update wind simulation'''
@@ -153,6 +194,7 @@ def process_jsb_input(buf):
                          fdm.get('vcas', units='mps'),
                          0x4c56414f)
     try:
+        import pdb; pdb.set_trace()
         sim_out.send(simbuf)
     except socket.error as e:
         if e.errno not in [ errno.ECONNREFUSED ]:
@@ -275,9 +317,8 @@ def main_loop():
         except select.error:
             util.check_parent()
             continue
-
         tnow = time.time()
-
+        
         if jsb_in.fileno() in rin:
             buf = jsb_in.recv(fdm.packet_size())
             process_jsb_input(buf)
@@ -285,7 +326,7 @@ def main_loop():
 
         if sim_in.fileno() in rin:
             simbuf = sim_in.recv(28)
-            process_sitl_input(simbuf)
+            process_sitl_input(simbuf, opts.vehicle)
             last_sim_input = tnow
 
         # show any jsbsim console output
@@ -312,7 +353,7 @@ def main_loop():
             last_wind_update = tnow
 
         if tnow - last_report > 3:
-            print("FPS %u asl=%.1f agl=%.1f roll=%.1f pitch=%.1f a=(%.2f %.2f %.2f)" % (
+            print("FPS %u asl=%.3f agl=%.3f roll=%.3f pitch=%.3f a=(%.2f %.2f %.2f)" % (
                 frame_count / (time.time() - last_report),
                 fdm.get('altitude', units='meters'),
                 fdm.get('agl', units='meters'),
@@ -342,6 +383,7 @@ signal.signal(signal.SIGTERM, exit_handler)
 
 try:
     main_loop()
-except:
+except Exception as inst:
+    print inst
     exit_handler()
     raise
