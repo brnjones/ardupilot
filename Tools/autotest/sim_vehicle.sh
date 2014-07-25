@@ -254,10 +254,11 @@ case $VEHICLE in
 	if [ "$FRAME" == "Rascucopter" ];
 	then
 	    RUNSIM="nice $autotest/jsbsim/runsim.py --home=$SIMHOME --simin=$SIMIN_PORT --simout=$SIMOUT_PORT --fgout=$FG_PORT --vehicle=Rascucopter $EXTRA_SIM"
+	    PARMS="rascucopter_params.parm"
 	else
             RUNSIM="nice $autotest/pysim/sim_multicopter.py --home=$SIMHOME $EXTRA_SIM"
+	    PARMS="copter_params.parm"
 	fi
-        PARMS="copter_params.parm"
         ;;
     APMrover2)
         RUNSIM="nice $autotest/pysim/sim_rover.py --home=$SIMHOME --rate=400 $EXTRA_SIM"

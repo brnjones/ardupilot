@@ -45,63 +45,63 @@
     <iyz unit="SLUG*FT2"> 0 </iyz>
     <emptywt unit="LBS"> 13 </emptywt>
     <location name="CG" unit="IN">
-      <x> 36.4 </x>
+      <x> 36.0 </x>
       <y> 0 </y>
-      <z> 4 </z>
+      <z> -1 </z>
     </location>
   </mass_balance>
 
   <ground_reactions>
-    <contact type="BOGEY" name="LEFT_MLG">
-      <location unit="IN">
-        <x> 33.1 </x>
-        <y> -12.9 </y>
-        <z> -2.0 </z>
-      </location>
-      <static_friction> 0.8 </static_friction>
-      <dynamic_friction> 0.5 </dynamic_friction>
-      <rolling_friction> 0.1 </rolling_friction>
-      <spring_coeff unit="LBS/FT"> 480 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
-    <contact type="BOGEY" name="RIGHT_MLG">
-      <location unit="IN">
-        <x> 33.1 </x>
-        <y> 12.9 </y>
-        <z> -2.0 </z>
-      </location>
-      <static_friction> 0.8 </static_friction>
-      <dynamic_friction> 0.5 </dynamic_friction>
-      <rolling_friction> 0.1 </rolling_friction>
-      <spring_coeff unit="LBS/FT"> 480 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
-    <contact type="BOGEY" name="TAIL_LG">
-      <location unit="IN">
-        <x> 68.9 </x>
-        <y>  0.0 </y>
-        <z> -2.0 </z>
-      </location>
-      <static_friction> 8.0 </static_friction>
-      <dynamic_friction> 5.0 </dynamic_friction>
-      <rolling_friction> 0.1 </rolling_friction>
-      <spring_coeff unit="LBS/FT"> 480 </spring_coeff>
-      <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff>
-      <max_steer unit="DEG"> 360.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+    <!-- <contact type="BOGEY" name="LEFT_MLG"> -->
+    <!--   <location unit="IN"> -->
+    <!--     <x> 33.1 </x> -->
+    <!--     <y> -12.9 </y> -->
+    <!--     <z> -2.0 </z> -->
+    <!--   </location> -->
+    <!--   <static_friction> 0.8 </static_friction> -->
+    <!--   <dynamic_friction> 0.5 </dynamic_friction> -->
+    <!--   <rolling_friction> 0.1 </rolling_friction> -->
+    <!--   <spring_coeff unit="LBS/FT"> 480 </spring_coeff> -->
+    <!--   <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff> -->
+    <!--   <max_steer unit="DEG"> 0.0 </max_steer> -->
+    <!--   <brake_group> NONE </brake_group> -->
+    <!--   <retractable>0</retractable> -->
+    <!-- </contact> -->
+    <!-- <contact type="BOGEY" name="RIGHT_MLG"> -->
+    <!--   <location unit="IN"> -->
+    <!--     <x> 33.1 </x> -->
+    <!--     <y> 12.9 </y> -->
+    <!--     <z> -2.0 </z> -->
+    <!--   </location> -->
+    <!--   <static_friction> 0.8 </static_friction> -->
+    <!--   <dynamic_friction> 0.5 </dynamic_friction> -->
+    <!--   <rolling_friction> 0.1 </rolling_friction> -->
+    <!--   <spring_coeff unit="LBS/FT"> 480 </spring_coeff> -->
+    <!--   <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff> -->
+    <!--   <max_steer unit="DEG"> 0.0 </max_steer> -->
+    <!--   <brake_group> NONE </brake_group> -->
+    <!--   <retractable>0</retractable> -->
+    <!-- </contact> -->
+    <!-- <contact type="BOGEY" name="TAIL_LG"> -->
+    <!--   <location unit="IN"> -->
+    <!--     <x> 68.9 </x> -->
+    <!--     <y>  0.0 </y> -->
+    <!--     <z> -2.0 </z> -->
+    <!--   </location> -->
+    <!--   <static_friction> 8.0 </static_friction> -->
+    <!--   <dynamic_friction> 5.0 </dynamic_friction> -->
+    <!--   <rolling_friction> 0.1 </rolling_friction> -->
+    <!--   <spring_coeff unit="LBS/FT"> 480 </spring_coeff> -->
+    <!--   <damping_coeff unit="LBS/FT/SEC"> 100 </damping_coeff> -->
+    <!--   <max_steer unit="DEG"> 360.0 </max_steer> -->
+    <!--   <brake_group> NONE </brake_group> -->
+    <!--   <retractable>0</retractable> -->
+    <!-- </contact> -->
     <contact type="STRUCTURE" name="CONTACT_FRONT_RIGHT">
       <location unit="IN">
         <x> 33.0 </x>
         <y>  3.0 </y>
-        <z>  0.0 </z>
+        <z>  -4.0 </z>
       </location>
       <static_friction>  0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -117,7 +117,7 @@
       <location unit="IN">
         <x> 39.0 </x>
         <y> -3.0 </y>
-        <z>  0.0 </z>
+        <z>  -4.0 </z>
       </location>
       <static_friction>  0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -133,7 +133,7 @@
       <location unit="IN">
         <x> 33.0 </x>
         <y> -3.0 </y>
-        <z>  0.0 </z>
+        <z>  -4.0 </z>
       </location>
       <static_friction>  0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>
@@ -149,7 +149,7 @@
       <location unit="IN">
         <x> 39.0 </x>
         <y> 3.0 </y>
-        <z> 0.0 </z>
+        <z> -4.0 </z>
       </location>
       <static_friction>  0.8 </static_friction>
       <dynamic_friction> 0.5 </dynamic_friction>

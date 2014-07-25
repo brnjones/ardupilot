@@ -71,7 +71,7 @@ def process_sitl_input(buf, vehicle):
     pwm = control[:11]
     (speed, direction, turbulance) = control[11:]
 
-    global wind
+    global wind, frame_count
     wind.speed      = speed*0.01
     wind.direction  = direction*0.01
     wind.turbulance = turbulance*0.01
@@ -126,19 +126,19 @@ def process_sitl_input(buf, vehicle):
         throttle2 = lock_to_range(throttle2, 0.0, 1.0)
         throttle3 = lock_to_range(throttle3, 0.0, 1.0)
         throttle4 = lock_to_range(throttle4, 0.0, 1.0)
-
-        # print("Outs: %s" % str([
-        #     throttle0,
-        #     throttle1,
-        #     throttle2,
-        #     throttle3,
-        #     throttle4]))
+        if frame_count % 100 == 0:
+            print("Outs: %s" % str([
+                throttle0,
+                throttle1,
+                throttle2,
+                throttle3,
+                throttle4]))
         #TODO (Jacob): only update if values have changed
-        jsb_set('fcs/throttle-cmd-norm[0]', 0.0) #throttle0)
-        jsb_set('fcs/throttle-cmd-norm[1]', 0.0) #throttle1)
-        jsb_set('fcs/throttle-cmd-norm[2]', 0.0) #throttle2)
-        jsb_set('fcs/throttle-cmd-norm[3]', 0.0) #throttle3)
-        jsb_set('fcs/throttle-cmd-norm[4]', 0.0) #throttle4)
+        jsb_set('fcs/throttle-cmd-norm[0]', throttle0)
+        jsb_set('fcs/throttle-cmd-norm[1]', throttle1)
+        jsb_set('fcs/throttle-cmd-norm[2]', throttle2)
+        jsb_set('fcs/throttle-cmd-norm[3]', throttle3)
+        jsb_set('fcs/throttle-cmd-norm[4]', throttle4)
         jsb_set('fcs/aileron-cmd-norm', aileron)
         jsb_set('fcs/elevator-cmd-norm', elevator)
         jsb_set('fcs/rudder-cmd-norm', rudder)
@@ -162,7 +162,7 @@ def update_wind(wind):
 
 def process_jsb_input(buf):
     '''process FG FDM input from JSBSim'''
-    global fdm, fg_out, sim_out
+    global fdm, fg_out, sim_out, frame_count
     fdm.parse(buf)
     if fg_out:
         try:
@@ -173,7 +173,28 @@ def process_jsb_input(buf):
         except socket.error as e:
             if e.errno not in [ errno.ECONNREFUSED ]:
                 raise
-
+    simlist = [fdm.get('latitude', units='degrees'),
+               fdm.get('longitude', units='degrees'),
+               fdm.get('altitude', units='meters'),
+               fdm.get('psi', units='degrees'),
+               fdm.get('v_north', units='mps'),
+               fdm.get('v_east', units='mps'),
+               fdm.get('v_down', units='mps'),
+               fdm.get('A_X_pilot', units='mpss'),
+               fdm.get('A_Y_pilot', units='mpss'),
+               fdm.get('A_Z_pilot', units='mpss'),
+               fdm.get('phidot', units='dps'),
+               fdm.get('thetadot', units='dps'),
+               fdm.get('psidot', units='dps'),
+               fdm.get('phi', units='degrees'),
+               fdm.get('theta', units='degrees'),
+               fdm.get('psi', units='degrees'),
+               fdm.get('vcas', units='mps'),
+               0x4c56414f]
+    if frame_count % 3000 == 0:
+        for val in simlist:
+            print("%.3f\t" % val),
+        print("\n")
     simbuf = struct.pack('<17dI',
                          fdm.get('latitude', units='degrees'),
                          fdm.get('longitude', units='degrees'),
@@ -194,7 +215,6 @@ def process_jsb_input(buf):
                          fdm.get('vcas', units='mps'),
                          0x4c56414f)
     try:
-        import pdb; pdb.set_trace()
         sim_out.send(simbuf)
     except socket.error as e:
         if e.errno not in [ errno.ECONNREFUSED ]:
@@ -206,8 +226,8 @@ def process_jsb_input(buf):
 # main program
 from optparse import OptionParser
 parser = OptionParser("runsim.py [options]")
-parser.add_option("--simin",   help="SITL input (IP:port)",          default="127.0.0.1:5502")
 parser.add_option("--simout",  help="SITL output (IP:port)",         default="127.0.0.1:5501")
+parser.add_option("--simin",   help="SITL input (IP:port)",          default="127.0.0.1:5502")
 parser.add_option("--fgout",   help="FG display output (IP:port)",   default="127.0.0.1:5503")
 parser.add_option("--home",    type='string', help="home lat,lng,alt,hdg (required)")
 parser.add_option("--vehicle", type='string', help="(Rascal, Rascucopter)", default="Rascal")
@@ -267,13 +287,9 @@ jsb_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 jsb_in.bind(jsb_in_address)
 jsb_in.setblocking(0)
 
-# socket addresses
-sim_out_address = interpret_address(opts.simout)
-sim_in_address  = interpret_address(opts.simin)
-
 # setup input from SITL sim
 sim_in = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sim_in.bind(sim_in_address)
+sim_in.bind(interpret_address(opts.simin))
 sim_in.setblocking(0)
 
 # setup output to SITL sim
@@ -307,6 +323,7 @@ def main_loop():
     last_report = tnow
     last_sim_input = tnow
     last_wind_update = tnow
+    global frame_count
     frame_count = 0
     paused = False
 
