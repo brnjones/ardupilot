@@ -16,9 +16,18 @@ class control_state(object):
         self.throttle = 0
         self.rudder = 0
         self.ground_height = 0
+        self.throttle0 = 0
+        self.throttle1 = 0
+        self.throttle2 = 0
+        self.throttle3 = 0
+
+class log_state(object):
+    def __init__(self):
+        self.SITL_input = ""
+        self.SITL_output= ""
 
 sitl_state = control_state()
-
+sitl_log = log_state()
 
 def interpret_address(addrstr):
     '''interpret a IP:port string'''
@@ -126,22 +135,24 @@ def process_sitl_input(buf, vehicle):
         throttle2 = lock_to_range(throttle2, 0.0, 1.0)
         throttle3 = lock_to_range(throttle3, 0.0, 1.0)
         throttle4 = lock_to_range(throttle4, 0.0, 1.0)
-        if frame_count % 100 == 0:
-            print("Outs: %s" % str([
-                throttle0,
-                throttle1,
-                throttle2,
-                throttle3,
-                throttle4]))
-        #TODO (Jacob): only update if values have changed
-        jsb_set('fcs/throttle-cmd-norm[0]', throttle0)
-        jsb_set('fcs/throttle-cmd-norm[1]', throttle1)
-        jsb_set('fcs/throttle-cmd-norm[2]', throttle2)
-        jsb_set('fcs/throttle-cmd-norm[3]', throttle3)
-        jsb_set('fcs/throttle-cmd-norm[4]', throttle4)
-        jsb_set('fcs/aileron-cmd-norm', aileron)
-        jsb_set('fcs/elevator-cmd-norm', elevator)
-        jsb_set('fcs/rudder-cmd-norm', rudder)
+        sitl_log.SITL_input = "Outs: %s" % str([
+            throttle0,
+            throttle1,
+            throttle2,
+            throttle3,
+            throttle4])
+        if throttle0 != sitl_state.throttle0:
+            jsb_set('fcs/ne_motor', throttle0)
+        if throttle1 != sitl_state.throttle1:
+            jsb_set('fcs/sw_motor', throttle1)
+        if throttle2 != sitl_state.throttle2:
+            jsb_set('fcs/nw_motor', throttle2)
+        if throttle3 != sitl_state.throttle3:
+            jsb_set('fcs/se_motor', throttle3)
+        #jsb_set('fcs/throttle-cmd-norm', throttle4)
+        #jsb_set('fcs/aileron-cmd-norm', aileron)
+        #jsb_set('fcs/elevator-cmd-norm', elevator)
+        #jsb_set('fcs/rudder-cmd-norm', rudder)
     else:
         raise ValueError("Vehicle does not match predefined types")
 
@@ -173,28 +184,16 @@ def process_jsb_input(buf):
         except socket.error as e:
             if e.errno not in [ errno.ECONNREFUSED ]:
                 raise
-    simlist = [fdm.get('latitude', units='degrees'),
-               fdm.get('longitude', units='degrees'),
-               fdm.get('altitude', units='meters'),
-               fdm.get('psi', units='degrees'),
-               fdm.get('v_north', units='mps'),
-               fdm.get('v_east', units='mps'),
-               fdm.get('v_down', units='mps'),
-               fdm.get('A_X_pilot', units='mpss'),
-               fdm.get('A_Y_pilot', units='mpss'),
+    simlist = [fdm.get('altitude', units='meters'),
                fdm.get('A_Z_pilot', units='mpss'),
-               fdm.get('phidot', units='dps'),
-               fdm.get('thetadot', units='dps'),
-               fdm.get('psidot', units='dps'),
                fdm.get('phi', units='degrees'),
-               fdm.get('theta', units='degrees'),
-               fdm.get('psi', units='degrees'),
-               fdm.get('vcas', units='mps'),
-               0x4c56414f]
-    if frame_count % 3000 == 0:
-        for val in simlist:
-            print("%.3f\t" % val),
-        print("\n")
+               fdm.get('theta', units='degrees')]
+
+    out_string = ""
+    for val in simlist:
+        out_string += "%.3f\t" % val
+    out_string += "\n"
+    sitl_log.SITL_output = out_string
     simbuf = struct.pack('<17dI',
                          fdm.get('latitude', units='degrees'),
                          fdm.get('longitude', units='degrees'),
@@ -229,6 +228,8 @@ parser = OptionParser("runsim.py [options]")
 parser.add_option("--simout",  help="SITL output (IP:port)",         default="127.0.0.1:5501")
 parser.add_option("--simin",   help="SITL input (IP:port)",          default="127.0.0.1:5502")
 parser.add_option("--fgout",   help="FG display output (IP:port)",   default="127.0.0.1:5503")
+parser.add_option("--jsbin",   help="jsb input (IP:port)",   default="127.0.0.1:5504")
+parser.add_option("--jsbout",   help="jsb output (IP:port)",   default="127.0.0.1:5505")
 parser.add_option("--home",    type='string', help="home lat,lng,alt,hdg (required)")
 parser.add_option("--vehicle", type='string', help="(Rascal, Rascucopter)", default="Rascal")
 parser.add_option("--script",  type='string', help='jsbsim model script', default='test.xml')
@@ -255,7 +256,7 @@ setup_template(opts.home, opts.vehicle)
 
 script = os.path.join('jsbsim', opts.vehicle, opts.script)
 # start child
-cmd = "JSBSim --realtime --suspend --nice --simulation-rate=1000 --logdirectivefile=jsbsim/fgout.xml --script=%s" % script
+cmd = "JSBSim --realtime --suspend --nice --simulation-rate=100 --logdirectivefile=jsbsim/fgout.xml --script=%s" % script
 if opts.options:
     cmd += ' %s' % opts.options
 
@@ -311,8 +312,8 @@ fdm = fgFDM.fgFDM()
 
 jsb_console.send('info\n')
 jsb_console.send('resume\n')
-jsb.expect(["trim computation time","Trim Results"])
-time.sleep(1.5)
+#jsb.expect(["trim computation time","Trim Results"])
+time.sleep(3.0)
 jsb_console.logfile = None
 
 print("Simulator ready to fly")
@@ -352,7 +353,7 @@ def main_loop():
         if jsb.fileno() in rin:
             util.pexpect_drain(jsb)
 
-        if tnow - last_sim_input > 0.2:
+        if tnow - last_sim_input > 1.0:
             if not paused:
                 print("PAUSING SIMULATION")
                 paused = True
@@ -369,7 +370,7 @@ def main_loop():
             update_wind(wind)
             last_wind_update = tnow
 
-        if tnow - last_report > 3:
+        if tnow - last_report > 0.5:
             print("FPS %u asl=%.3f agl=%.3f roll=%.3f pitch=%.3f a=(%.2f %.2f %.2f)" % (
                 frame_count / (time.time() - last_report),
                 fdm.get('altitude', units='meters'),
@@ -379,7 +380,8 @@ def main_loop():
                 fdm.get('A_X_pilot', units='mpss'),
                 fdm.get('A_Y_pilot', units='mpss'),
                 fdm.get('A_Z_pilot', units='mpss')))
-
+            print(sitl_log.SITL_input)
+            print(sitl_log.SITL_output)
             frame_count = 0
             last_report = time.time()
 
