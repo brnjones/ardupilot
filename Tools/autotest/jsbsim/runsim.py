@@ -3,7 +3,7 @@
 
 #TODO (Jacob) re-introduce wind modelling
 #TODO (Jacob) re-introduce flight gear visualization
-#TODO (Jacob) Figure out what to do about alitude spawn
+#TODO (Jacob) Figure out what to do about altitude spawn
 import os, time, sys, subprocess, socket, threading, struct, Queue, telnetlib
 from pymavlink import fgFDM
 
@@ -72,6 +72,7 @@ class SitlInThread(threading.Thread):
         self._vehicle = vehicle
         self._stop = threading.Event()
         self._out_q = out_q
+        self.debug_state = ''
 
     def stop(self):
         self._stop.set()
@@ -117,7 +118,7 @@ class SitlInThread(threading.Thread):
                 raise ValueError('Pwm length must at least 8')
             throttles = [0.0]*5
             for i in range(0, 5):
-                throttles[i] = (pwm[i]-1080)/1000.0
+                throttles[i] = (pwm[i]-1080)/1000.0*0.1
                 if throttles[i] < 0.0:
                     throttles[i] = 0.0
                 elif throttles[i] > 1.0:
@@ -125,6 +126,11 @@ class SitlInThread(threading.Thread):
             aileron = (pwm[5]-1500)/500.0
             elevator =(pwm[6]-1500)/500.0
             rudder = (pwm[7]-1500)/500.0
+            self.debug_state = 'Thr1: %s\tThr2: %s\tThr3: %s\tThr4: %s\t' % (
+                throttles[0], 
+                throttles[1],
+                throttles[2],
+                throttles[3])
             self._set_jsb_console('fcs/ne_motor', throttles[0])
             self._set_jsb_console('fcs/sw_motor', throttles[1])
             self._set_jsb_console('fcs/nw_motor', throttles[2])
@@ -264,6 +270,7 @@ def main(args):
                 for str_ in sub_proc_output:
                     print(str_)
             print(sitl_out_thread.debug_state)
+            print(sitl_in_thread.debug_state)
             if sitl_in_thread.stopped():
                 print("Something killed sitl_in_thread")
                 break
@@ -301,7 +308,6 @@ def main(args):
                 print(sub_proc_output)
             sitl_out_thread.join()
             print("SITL Output thread dead")
-        time.sleep(10000)
     print("Finished")
 
 
