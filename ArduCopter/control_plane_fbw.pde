@@ -37,8 +37,8 @@ static void plane_fbw_run()
         nav_pitch_cd = -(pitch_input * pitch_limit_min_cd);
     }
     nav_pitch_cd = constrain_int32(nav_pitch_cd, pitch_limit_min_cd, plane_aparm.pitch_limit_max_cd.get());
-
-    stabilize_plane();
+    // TODO(BrandonJ): Uncomment this on next commit
+    // stabilize_plane();
     
     /*
     if (failsafe.ch3_failsafe && g.short_fs_action == 2) {

@@ -2,10 +2,10 @@
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
-    name="Testing Rascal110">
+    name="Testing Rascucopter">
 
   <description>
-    test ArduPlane using Rascal110 and JSBSim
+    Test Rascucopter. Engines 0-3 are Quad props. Engine 4 is forward flight.
   </description>
 
   <use aircraft="Rascal" initialize="reset"/>
@@ -17,9 +17,13 @@
   <run start="0" end="10000000" dt="0.001">
     <property value="0"> simulation/notify-time-trigger </property>
 
-    <event name="start engine">
+    <event name="start engines">
       <condition> simulation/sim-time-sec le 0.01 </condition>
       <set name="propulsion/engine[0]/set-running" value="1"/>
+      <set name="propulsion/engine[1]/set-running" value="1"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
+      <set name="propulsion/engine[3]/set-running" value="1"/>
+      <set name="propulsion/engine[4]/set-running" value="1"/>
       <notify/>
     </event>
 
