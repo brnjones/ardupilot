@@ -58,6 +58,14 @@ def interpret_address(addrstr):
     return tuple(a)
 
 
+def bound_value(value, low, high):
+    if value < low:
+        value = low
+    elif value > high:
+        value = high
+    return value
+
+
 class SitlInThread(threading.Thread):
     def __init__(self, sitl_in, jsb_in, vehicle, out_q):
         super(SitlInThread, self).__init__()
@@ -119,24 +127,32 @@ class SitlInThread(threading.Thread):
         elif self._vehicle == 'Rascucopter':
             if len(pwm) < 8:
                 raise ValueError('Pwm length must at least 8')
-            throttles = [0.0]*5
-            for i in range(0, 5):
+            throttles = [0.0]*4
+            for i in range(0, 4):
                 throttles[i] = (pwm[i]-1070)/930.0
-                if throttles[i] < 0.0:
-                    throttles[i] = 0.0
-                elif throttles[i] > 1.0:
-                    throttles[i] = 1.0
-            aileron = (pwm[5]-1500)/500.0
-            elevator =(pwm[6]-1500)/500.0
+                throttles[i] = bound_value(throttles[i], 0.0, 1.0)
+
+            aileron = (pwm[4]-1500)/500.0
+            elevator =(pwm[5]-1500)/500.0
+            fwd_throttle = (pwm[6]-1070)/930.0
             rudder = (pwm[7]-1500)/500.0
+
+            aileron = bound_value(aileron, -1.0, 1.0)
+            elevator = bound_value(elevator, -1.0, 1.0)
+            fwd_throttle = bound_value(fwd_throttle, -1.0, 1.0)
+            rudder = bound_value(rudder, -1.0, 1.0)
+
             sim_time = time.time() -self._start_time
             self.debug_state = 'Thr0: %s\tThr1: %s\tThr2: %s\tThr3: %s\tThr4: %s' % (
-                throttles[0], throttles[1], throttles[2], throttles[3], throttles[4])
+                throttles[0], throttles[1], throttles[2], throttles[3], fwd_throttle)
             self._set_jsb_console('fcs/ne_motor', throttles[0])
             self._set_jsb_console('fcs/sw_motor', throttles[1])
             self._set_jsb_console('fcs/nw_motor', throttles[2])
             self._set_jsb_console('fcs/se_motor', throttles[3])
-            self._set_jsb_console('fcs/fwd_motor', throttles[4])
+            self._set_jsb_console('fcs/aileron-cmd-norm', aileron)
+            self._set_jsb_console('fcs/elevator-cmd-norm', elevator)
+            self._set_jsb_console('fcs/throttle-cmd-norm[0]', fwd_throttle)
+            self._set_jsb_console('fcs/rudder-cmd-norm', rudder)
         else:
             raise ValueError("Vehicle does not match predefined types")
 
@@ -274,7 +290,6 @@ def main(args):
         sitl_out_thread = SitlOutThread(ports['sitl_out'], ports['jsb_out'], args.outrate, log_q)
         sitl_in_thread.start()
         sitl_out_thread.start()
-        #TODO Wait for processes to finish
         while True:
             sub_proc_output = dump_queue(log_q)
             if sub_proc_output:
@@ -297,6 +312,7 @@ def main(args):
         print("Unexpected error:" + str(sys.exc_info()))
     finally:
         print("Shutting down sim")
+        # TODO: Close down ports
         if jsb_proc and jsb_proc.pid is not None:
             print("Killing JSBSim")
             if jsb_proc.poll() is None:
