@@ -4,16 +4,16 @@
 #TODO (Jacob) re-introduce wind modelling
 #TODO (Jacob) re-introduce flight gear visualization
 #TODO (Jacob) Figure out what to do about altitude spawn
-import os, time, sys, subprocess, socket, threading, struct, Queue, telnetlib
+import os, time, sys, subprocess, socket, threading, struct, Queue, telnetlib, re, math, errno
 from pymavlink import fgFDM
 
 import pdb
 
-_kRecvTimeout = 0.1 # Seconds
+_kRecvTimeout = 1.0 # Seconds
 _kWriteTimeout = 0.1 # Seconds
 _kConsoleTimeOut = 0.001 # Seconds
 
-def setup_scripts(autotest_path, ports, home, vehicle):
+def setup_scripts(autotest_path, ports, home, vehicle, simrate):
     home_list = home.split(',')
     if len(home_list) != 4:
         raise ValueError("home should be lat,lng,alt,hdg - '%s'" % home)
@@ -37,7 +37,8 @@ def setup_scripts(autotest_path, ports, home, vehicle):
     template = os.path.join(autotest_path, 'jsbsim', 'fgout_template.xml')
     out      = os.path.join(autotest_path, 'jsbsim', 'fgout.xml')
     xml = open(template).read() % { 'NAME' : addr,
-                                    'FGOUTPORT'  : int(port) }
+                                    'FGOUTPORT'  : int(port),
+                                    'SIMRATE'    : int(simrate)}
     open(out, mode='w').write(xml)
     print("Wrote:\n%s" % out)
 
@@ -72,7 +73,9 @@ class SitlInThread(threading.Thread):
         self._vehicle = vehicle
         self._stop = threading.Event()
         self._out_q = out_q
+        self._start_time = time.time()
         self.debug_state = ''
+
 
     def stop(self):
         self._stop.set()
@@ -118,7 +121,7 @@ class SitlInThread(threading.Thread):
                 raise ValueError('Pwm length must at least 8')
             throttles = [0.0]*5
             for i in range(0, 5):
-                throttles[i] = (pwm[i]-1080)/1000.0*0.1
+                throttles[i] = (pwm[i]-1080)/1000.0
                 if throttles[i] < 0.0:
                     throttles[i] = 0.0
                 elif throttles[i] > 1.0:
@@ -126,15 +129,25 @@ class SitlInThread(threading.Thread):
             aileron = (pwm[5]-1500)/500.0
             elevator =(pwm[6]-1500)/500.0
             rudder = (pwm[7]-1500)/500.0
+            sim_time = time.time() -self._start_time
             self.debug_state = 'Thr1: %s\tThr2: %s\tThr3: %s\tThr4: %s\t' % (
                 throttles[0], 
                 throttles[1],
                 throttles[2],
                 throttles[3])
+            armed = False
+            for throt in throttles:
+                if throt > 0.0:
+                    armed = True
             self._set_jsb_console('fcs/ne_motor', throttles[0])
             self._set_jsb_console('fcs/sw_motor', throttles[1])
             self._set_jsb_console('fcs/nw_motor', throttles[2])
             self._set_jsb_console('fcs/se_motor', throttles[3])
+            # TODO (Jacob) Kill this
+            # if armed:
+            #     self._set_jsb_console('aero/roll_moment_probe', 0.2*math.sin(0.5*sim_time))
+            # else:
+            #     self._set_jsb_console('aero/roll_moment_probe', 0.0)
         else:
             raise ValueError("Vehicle does not match predefined types")
 
@@ -149,7 +162,7 @@ class SitlInThread(threading.Thread):
 
 
 class SitlOutThread(threading.Thread):
-    def __init__(self, sitl_out, jsb_out, out_q):
+    def __init__(self, sitl_out, jsb_out, out_rate, out_q):
         super( SitlOutThread, self).__init__()
         # Connect to the output of this SITL (MavProxy)
         self._sitl_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -164,6 +177,8 @@ class SitlOutThread(threading.Thread):
         self._out_q = out_q
         self._stop = threading.Event()
         self._fdm = fgFDM.fgFDM()
+        self._out_rate = out_rate
+        self._last_out = 0
         self.debug_state = ''
 
     def stop(self):
@@ -187,7 +202,10 @@ class SitlOutThread(threading.Thread):
                 buf = self._jsb_out.recv(self._fdm.packet_size())
             except socket.timeout:
                 continue
-            self._relay_to_sitl_out(buf)
+            now = time.time()
+            if (now - self._last_out) > (1.0/self._out_rate):
+                self._last_out = now
+                self._relay_to_sitl_out(buf)
         self.stop()
         
     def _relay_to_sitl_out(self, buf):
@@ -220,7 +238,11 @@ class SitlOutThread(threading.Thread):
                                fdm.get('psi', units='degrees'),
                                fdm.get('vcas', units='mps'),
                                0x4c56414f)
-        self._sitl_out.send(out_buf)
+        try:
+            self._sitl_out.send(out_buf)
+        except socket.error as e:
+            if e.errno not in [ errno.ECONNREFUSED ]:
+                raise
 
 
 def dump_queue(queue):
@@ -241,7 +263,7 @@ def main(args):
              'jsb_in' : args.jsbin,
              'jsb_out' : args.jsbout}
     autotest_path = os.path.realpath(os.path.join(__file__,'..','..'))
-    setup_scripts(autotest_path, ports, args.home, args.vehicle)
+    setup_scripts(autotest_path, ports, args.home, args.vehicle, args.simrate)
     # Start JSB sim
     jsb_options = ['JSBSim', 
                    '--realtime', '--suspend', '--nice',
@@ -260,7 +282,7 @@ def main(args):
         jsb_proc = subprocess.Popen(jsb_command.strip().split(' '))
         time.sleep(8)
         sitl_in_thread = SitlInThread(ports['sitl_in'], ports['jsb_in'], args.vehicle, log_q)
-        sitl_out_thread = SitlOutThread(ports['sitl_out'], ports['jsb_out'], log_q)
+        sitl_out_thread = SitlOutThread(ports['sitl_out'], ports['jsb_out'], args.outrate, log_q)
         sitl_in_thread.start()
         sitl_out_thread.start()
         #TODO Wait for processes to finish
@@ -326,6 +348,7 @@ if __name__ == "__main__":
                       choices = ['Rascal', 'Rascucopter'])
     parser.add_argument('--options', help='jsbsim startup options', default='')
     parser.add_argument('--simrate', help='Simulation rate', type=int, default=1000)
+    parser.add_argument('--outrate', help='Rate the simulation outputs data', type=int, default=100)
     args = parser.parse_args()
 
     main(args)

@@ -574,14 +574,14 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: RATE_RLL_P
     // @DisplayName: Roll axis rate controller P gain
     // @Description: Roll axis rate controller P gain.  Converts the difference between desired roll rate and actual roll rate into a motor speed output
-    // @Range: 0.08 0.20
+    // @Range: 0.000 10.0
     // @Increment: 0.005
     // @User: Standard
 
     // @Param: RATE_RLL_I
     // @DisplayName: Roll axis rate controller I gain
     // @Description: Roll axis rate controller I gain.  Corrects long-term difference in desired roll rate vs actual roll rate
-    // @Range: 0.01 0.5
+    // @Range: 0.000 10.0
     // @Increment: 0.01
     // @User: Standard
 
@@ -596,7 +596,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: RATE_RLL_D
     // @DisplayName: Roll axis rate controller D gain
     // @Description: Roll axis rate controller D gain.  Compensates for short-term change in desired roll rate vs actual roll rate
-    // @Range: 0.001 0.02
+    // @Range: 0.000 10.00
     // @Increment: 0.001
     // @User: Standard
 #if FRAME_CONFIG == HELI_FRAME
@@ -608,14 +608,14 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: RATE_PIT_P
     // @DisplayName: Pitch axis rate controller P gain
     // @Description: Pitch axis rate controller P gain.  Converts the difference between desired pitch rate and actual pitch rate into a motor speed output
-    // @Range: 0.08 0.20
+    // @Range: 0.00 1.00
     // @Increment: 0.005
     // @User: Standard
 
     // @Param: RATE_PIT_I
     // @DisplayName: Pitch axis rate controller I gain
     // @Description: Pitch axis rate controller I gain.  Corrects long-term difference in desired pitch rate vs actual pitch rate
-    // @Range: 0.01 0.5
+    // @Range: 0.00 1.00
     // @Increment: 0.01
     // @User: Standard
 
@@ -630,7 +630,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: RATE_PIT_D
     // @DisplayName: Pitch axis rate controller D gain
     // @Description: Pitch axis rate controller D gain.  Compensates for short-term change in desired pitch rate vs actual pitch rate
-    // @Range: 0.001 0.02
+    // @Range: 0.000 1.00
     // @Increment: 0.001
     // @User: Standard
 #if FRAME_CONFIG == HELI_FRAME
@@ -642,14 +642,14 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: RATE_YAW_P
     // @DisplayName: Yaw axis rate controller P gain
     // @Description: Yaw axis rate controller P gain.  Converts the difference between desired yaw rate and actual yaw rate into a motor speed output
-    // @Range: 0.150 0.250
+    // @Range: 0.000 1.000
     // @Increment: 0.005
     // @User: Standard
 
     // @Param: RATE_YAW_I
     // @DisplayName: Yaw axis rate controller I gain
     // @Description: Yaw axis rate controller I gain.  Corrects long-term difference in desired yaw rate vs actual yaw rate
-    // @Range: 0.010 0.020
+    // @Range: 0.000 1.000
     // @Increment: 0.01
     // @User: Standard
 
@@ -664,7 +664,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: RATE_YAW_D
     // @DisplayName: Yaw axis rate controller D gain
     // @Description: Yaw axis rate controller D gain.  Compensates for short-term change in desired yaw rate vs actual yaw rate
-    // @Range: 0.000 0.02
+    // @Range: 0.000 1.00
     // @Increment: 0.001
     // @User: Standard
 #if FRAME_CONFIG == HELI_FRAME
@@ -842,13 +842,13 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: STB_RLL_P
     // @DisplayName: Roll axis stabilize controller P gain
     // @Description: Roll axis stabilize (i.e. angle) controller P gain.  Converts the error between the desired roll angle and actual angle to a desired roll rate
-    // @Range: 3.000 12.000
+    // @Range: 0.000 100.000
     // @User: Standard
 
     // @Param: STB_RLL_I
     // @DisplayName: Roll axis stabilize controller I gain
     // @Description: Roll axis stabilize (i.e. angle) controller I gain.  Corrects for longer-term difference in desired roll angle and actual angle
-    // @Range: 0.000 0.100
+    // @Range: 0.000 1.000
     // @User: Standard
 
     // @Param: STB_RLL_IMAX
@@ -869,14 +869,14 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Param: STB_YAW_P
     // @DisplayName: Yaw axis stabilize controller P gain
     // @Description: Yaw axis stabilize (i.e. angle) controller P gain.  Converts the error between the desired yaw angle and actual angle to a desired yaw rate
-    // @Range: 3.000 6.000
+    // @Range: 0.000 100.000
     // @User: Standard
     GGROUP(p_stabilize_yaw,        "STB_YAW_", AC_P),
 
     // @Param: THR_ALT_P
     // @DisplayName: Altitude controller P gain
     // @Description: Altitude controller P gain.  Converts the difference between the desired altitude and actual altitude into a climb or descent rate which is passed to the throttle rate controller
-    // @Range: 1.000 3.000
+    // @Range: 0.000 100.000
     // @User: Standard
     GGROUP(p_alt_hold,     "THR_ALT_", AC_P),
 
