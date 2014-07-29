@@ -30,7 +30,7 @@
     <location name="VRP" unit="M">
       <x> 0 </x>
       <y> 0 </y>
-      <z> -0.1 </z>
+      <z> 0 </z>
     </location>
   </metrics>
 
@@ -203,6 +203,25 @@
         <x>0</x>
         <y>0</y>
         <z>-1</z>
+      </direction>
+    </force>
+
+    <force name="fwd_motor" frame="BODY">
+      <function>
+        <product>
+          <property>fcs/fwd_motor</property>
+	  <property>fcs/KStaticThrust</property>
+        </product>
+      </function>
+      <location unit="M">
+        <x>-0.162</x>
+        <y>-0.0</y>
+        <z>0</z>
+      </location>
+      <direction>
+        <x>1</x>
+        <y>0</y>
+        <z>0</z>
       </direction>
     </force>
 

@@ -121,7 +121,7 @@ class SitlInThread(threading.Thread):
                 raise ValueError('Pwm length must at least 8')
             throttles = [0.0]*5
             for i in range(0, 5):
-                throttles[i] = (pwm[i]-1080)/1000.0
+                throttles[i] = (pwm[i]-1070)/930.0
                 if throttles[i] < 0.0:
                     throttles[i] = 0.0
                 elif throttles[i] > 1.0:
@@ -130,24 +130,13 @@ class SitlInThread(threading.Thread):
             elevator =(pwm[6]-1500)/500.0
             rudder = (pwm[7]-1500)/500.0
             sim_time = time.time() -self._start_time
-            self.debug_state = 'Thr1: %s\tThr2: %s\tThr3: %s\tThr4: %s\t' % (
-                throttles[0], 
-                throttles[1],
-                throttles[2],
-                throttles[3])
-            armed = False
-            for throt in throttles:
-                if throt > 0.0:
-                    armed = True
+            self.debug_state = 'Thr0: %s\tThr1: %s\tThr2: %s\tThr3: %s\tThr4: %s' % (
+                throttles[0], throttles[1], throttles[2], throttles[3], throttles[4])
             self._set_jsb_console('fcs/ne_motor', throttles[0])
             self._set_jsb_console('fcs/sw_motor', throttles[1])
             self._set_jsb_console('fcs/nw_motor', throttles[2])
             self._set_jsb_console('fcs/se_motor', throttles[3])
-            # TODO (Jacob) Kill this
-            # if armed:
-            #     self._set_jsb_console('aero/roll_moment_probe', 0.2*math.sin(0.5*sim_time))
-            # else:
-            #     self._set_jsb_console('aero/roll_moment_probe', 0.0)
+            self._set_jsb_console('fcs/fwd_motor', throttles[4])
         else:
             raise ValueError("Vehicle does not match predefined types")
 
